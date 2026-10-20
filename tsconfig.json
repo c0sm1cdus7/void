@@ -11,5 +11,5 @@
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["*.ts", "objects/**/*.ts", "commands/**/*.ts", "journeys/**/*.ts", "tests/**/*.ts"]
+  "include": ["*.ts", "objects/**/*.ts", "commands/**/*.ts", "journeys/**/*.ts", "views/**/*.ts", "scripts/**/*.ts", "tests/**/*.ts"]
 }

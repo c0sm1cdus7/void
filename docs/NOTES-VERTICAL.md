@@ -3,7 +3,19 @@
 Notes is the first VOID vertical and the test of DESERT's shared view/journey
 architecture. Completion requires a real product, not a renamed local-draft
 demo. The N0 runtime proof below starts that work without claiming the missing
-view, web, MCP or collaborative mechanisms.
+MCP or collaborative mechanisms. N1 now mounts a local web create/read slice.
+
+## N1 local web slice
+
+`experience.ts` composes five typed Views and four presentation/execution
+bindings. Home and Notes share `create-note`; `read-notes` binds the list and
+read-only detail. Visual catalog consumes the existing SDK inspection owner.
+The builder validates and freezes the program before including it in the
+verified web artifact. Unknown or unsupported semantics fail before mounting.
+
+Canonical command inputs, validation, admission, acceptance and recovery stay
+inside DESERT. The local host retains its private developer identity and
+PostgreSQL store. This is not a production identity or recovery flow.
 
 ## Required product behavior
 
@@ -14,6 +26,8 @@ view, web, MCP or collaborative mechanisms.
 - Reuse the editor view without embedding journey IDs or command callbacks.
 - Preserve a draft through supported presentation changes and recover the same
   accepted operation after a lost response.
+- Present the editor in the right dock, with a transient fallback when it does
+  not fit. Keep navigation in the left dock; use shared host geometry and behavior.
 - Reject stale edits instead of silently replacing newer content.
 - Keep notes private initially; add authorized participants and real-time
   collaboration under an explicit shared policy.
@@ -60,10 +74,11 @@ actually ran. A passing N0 result does not mark the remaining rows complete.
 
 ## Shared SDK gaps
 
-1. The general reusable `ViewDefinition`/runtime view contract and journey
-   bindings are not installed. Do not invent callable `defineView` APIs in VOID.
-   Planned declarations include `views/notes.view.ts`,
-   `views/noteEditor.view.ts` and `views/visualCatalog.view.ts`.
+1. N1 installs a finite read/create View program and shared web renderer.
+   General module composition, cross-module data binding, authored arbitrary
+   side docks and media-header handoff remain unsupported in this executable
+   subset; unsupported declarations fail. The global catalog ownership audit
+   remains open. Do not confuse this slice with full architecture closure.
 2. The human builder rejects subject mutations with input fields; its mutation
    client supplies an empty input for subject actions. Editing requires a shared
    SDK correction, not a private product form.

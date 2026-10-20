@@ -14,21 +14,26 @@ validation, runtime, surface protocols, renderers and their closed catalogs.
 Missing capabilities belong in DESERT; VOID must not acquire a private UI engine,
 controller, validator or provider execution bypass.
 
-Author reusable declarations in `views/*.view.ts` and activities in
-`journeys/*.journey.ts`. A filename is a discoverable domain convention, not a
+The target groups capabilities under `src/modules/`, with reusable declarations
+in `views/*.view.ts` and activities in `journeys/*.journey.ts` within each module.
+Product-level compositions can remain outside modules. See the
+[architecture and ownership contract](MODULE-ANATOMY.md); source migration has
+not occurred. A filename is a discoverable domain convention, not a
 replacement for validation or permission to execute arbitrary author code.
 Views declare typed information, input and output ports without journey IDs.
 Journeys bind those ports to guarded transitions and commands. Runtime instances
 have stable identities, current state and authorized data.
 
 Destinations identify semantic locations, not URLs or platform widgets. Multiple
-entrypoints can start the same journey. Home is the navigation root, not a
-mandatory detour for deep links, restored work or recovery.
+entrypoints can start the same journey. Home is VOID's chosen initial destination,
+not a mandatory SDK/module convention or detour for deep links, restored work
+or recovery. Navigation explicitly selects published destinations; the sidebar
+does not enumerate every registered view.
 
 The contributor-facing acceptance goal is to author a typed `View` object in a
 `*.view.ts` file, bind it from a `*.journey.ts` and preview it without writing UI
 implementation code. See the [typed authoring proposal](VIEW-AUTHORING.md) for
-the proposed boundary and current missing SDK capabilities.
+the installed literal subset and current missing SDK capabilities.
 
 The storyboard is derived from the same declarations: entries, destinations,
 states, views, transitions, guards, outcomes and recovery. It is not a second
@@ -46,7 +51,7 @@ does not establish authority. Command acceptance and completion remain distinct.
 | 1 | Notes | Durable creation, reading and safe editing through reusable views and shared journeys. Full scope includes untitled notes, labels, participation and collaborative behavior. |
 | 2 | System | System settings and navigation through the same contracts. |
 | 3 | Appearance | Shared preferences applied to the web Visual catalog, not per-component overrides. |
-| 4 | User | User settings and identity context without inventing admin access to private content. |
+| 4 | Identity | Identity settings and context without inventing admin access to private content. |
 | 5 | Connections | Authorized provisioning of tools/services such as GitHub, Resend, Railway and Apple Developer. |
 | 6 | Environments | VOID CLI enrollment, host availability and discovered environment-bound actors. |
 | 7 | Tasks | Task context, project labels, environment-bound assignment, queued execution and conversations with the assigned actor about that task. |
@@ -54,6 +59,12 @@ does not establish authority. Command acceptance and completion remain distinct.
 System's precise navigation nesting remains a design decision. The sequence
 does not authorize provisioning accounts, installing software on machines,
 creating cloud infrastructure or spending money.
+
+The domain term is Identity, including humans and agents. Minimum access security
+is a prerequisite for a protected product release, not a silent reordering of the
+full Identity vertical: authorized first-admin bootstrap, lock/sign-in and recovery
+need their own contracts and evidence. Only the admin creates further identities.
+Password authentication, OAuth, recovery and that admin policy are not installed.
 
 ## Visual catalog
 
@@ -67,9 +78,9 @@ same typed meaning with their own qualified catalogs. Appearance changes are
 observable in this destination because it consumes the same owners as the product.
 No custom CSS, slots that draw arbitrary markup or product-specific variants.
 
-The existing bank must not simply be copied into VOID or renamed while retaining
-renderer-owned presentation outside the catalog. Migration depends on the closed
-view contract, complete ownership inventory and enforcement gates in DESERT.
+N1 mounts the existing web inspection owner through the closed View program;
+no specimen UI is copied into VOID. Full catalog ownership inventory and
+enforcement closure remain required before a qualified public release.
 The preserved Landmarks preview is not replaced during this proof.
 
 ## Media
@@ -140,6 +151,20 @@ Discovering a CLI or selecting an actor grants no filesystem/shell authority.
 These checkpoints do not reduce the Notes requirement. N0 is not a completed
 vertical, N2 is not real-time collaboration, and agent exposure is not an MCP
 server. See [Notes acceptance](NOTES-VERTICAL.md).
+
+N1 is split into three observable deliveries:
+
+- **N1a, literal contract:** ordered View content with a standalone Header,
+  titled Stacks, constrained docks and validated output/reference names. A
+  real `notes.view.ts` consumes this API; it is not a mounted destination.
+- **N1b, visible authoring proof:** SDK-owned View renderer/preview, using the
+  existing catalog owners and explicit fixtures. No product UI implementation.
+- **N1c, runtime binding:** authorized data and typed outputs connect to the
+  actual Notes journeys; migrate the relevant Visual catalog destination.
+
+N1a does not close the full renderer/catalog ownership audit. The first visible
+VOID does not depend on finishing Connections, Environments or Tasks. A fixture
+preview must be distinguished from durable create/read and from N2 safe editing.
 
 Earlier Communicator, Library and destructive administration ideas are outside
 this ordered delivery sequence, not silently implemented or deleted. Admin

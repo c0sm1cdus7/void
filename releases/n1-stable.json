@@ -1,0 +1,64 @@
+{
+  "format": "void.approved-baseline/1",
+  "tag": "n1-stable",
+  "approvalDate": "2026-10-20",
+  "approvalTimezone": "America/Argentina/Buenos_Aires",
+  "status": "owner-approved-local-web-baseline",
+  "branch": "codex/notes-foundation",
+  "sourceRef": "refs/tags/n1-stable",
+  "scope": "Home, durable Notes create/read and Visual catalog through the preserved DESERT components. Recovery checkpoint, not a production or all-platform release.",
+  "sdk": {
+    "repository": "https://github.com/c0sm1cdus7/desert",
+    "commit": "46c1c04f33d7fa73e82e973f519baa2d58b69aa3",
+    "tag": "v128a-stable",
+    "dependency": "file:../desert",
+    "access": "Private SDK; authorized checkout required. This tag does not publish or relicense DESERT."
+  },
+  "nodeVersion": "v24.16.0",
+  "build": {
+    "directory": "build/void-n1-preserved-c",
+    "manifest": "DESERT-BUILD.json",
+    "manifestSha256": "0a93ca7e8e7d4e3acb29d047bdd40de5014266d936cddc049a41775c9bd5c4ba",
+    "verifiedFiles": 92,
+    "rendererRevision": "07c29892086f09e7bbbe5e9ce8b020c8e0634ff8eefc9ae7c8a10af846e1d575",
+    "contractDigest": "fcf9e7012a443c276aac2c121e7a85d81a8ce31b88be60978a6d15743b628d1c"
+  },
+  "verification": {
+    "sourceMatchesBuild": true,
+    "typecheck": "passed",
+    "runtimeTests": 12,
+    "browserTests": 7,
+    "generatedSvelteErrors": 0,
+    "generatedSvelteWarnings": 0,
+    "referenceVisualPairs": 20,
+    "referenceChangedPixels": 0,
+    "referenceMotionPairs": 12,
+    "scope": "Exact visual parity compares identical Landmarks reference data on the old and new SDK builds. VOID has its own labels and original SDK illustration; its content is not claimed pixel-identical to Landmarks."
+  },
+  "evidence": "docs/VERIFICATION.md",
+  "recovery": [
+    "Check out this tag in a new VOID directory and the exact SDK commit above in a sibling desert directory. Leave existing stores and approved previews untouched.",
+    "Use Node v24.16.0, PostgreSQL tools and locked dependencies in both repositories.",
+    "Run npm run check, then node scripts/build-web.ts build/void-n1-restored using a fresh build destination.",
+    "Run node scripts/run-local.ts build/void-n1-restored .local/void-n1-restored 4401, substituting an available local port if needed.",
+    "Use the private one-use launch URL generated locally; never commit it. Restore an existing store only by an explicit compatible-store selection, never by resetting its contract or identity."
+  ],
+  "preserved": [
+    "Original local identity and PostgreSQL store",
+    "Approved DESERT v127a-stable baseline",
+    "Current local preview and frozen build"
+  ],
+  "excludedFromPublication": [
+    "Credentials and browser access invitations",
+    "Local PostgreSQL data and browser state",
+    "Generated builds, screenshots and node_modules",
+    "Private SDK source and Apple sample media"
+  ],
+  "outstanding": [
+    "Safe editing and remaining Notes scope",
+    "General capability-module integration and renderer ownership audit",
+    "Production onboarding/identity, MCP/API transports and native releases",
+    "Public SDK licensing/distribution prerequisite"
+  ],
+  "releasePolicy": "Development branch and annotated recovery tag only. No main push, binary upload, deployment or native release."
+}

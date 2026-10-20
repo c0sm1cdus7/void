@@ -17,9 +17,22 @@ provider, a private renderer or a completed operating system.
 - Idempotent acceptance, durable receipts and controller/database restart checks.
 - The same journey exposure through local human and agent sessions.
 
-There is no VOID UI, migrated Visual catalog, safe note editing, real MCP server,
-remote API, collaborative editor or native binary yet. Local agent exposure is
-not MCP integration. See [Notes acceptance and SDK gaps](docs/NOTES-VERTICAL.md).
+The local **N1** increment mounts Home, Notes and Visual catalog through DESERT's
+typed View program. Home and Notes invoke the same create journey; the shared
+right-hand panel becomes transient when it cannot fit. Notes use the durable
+runtime above, not browser-only storage. Catalog specimens stay isolated.
+
+The repaired renderer mounts the approved v127a workspace and interactive bank
+directly. The earlier parallel workspace preview was rejected; preservation
+checks and their exact scope are recorded in [verification](docs/VERIFICATION.md).
+
+The owner-approved recovery checkpoint is [`n1-stable`](releases/n1-stable.json),
+paired with DESERT `v128a-stable`. It preserves the local web baseline on a
+development branch; it is not a complete production/native release.
+
+This is a trusted local developer workspace, not production onboarding/login.
+Safe editing, real MCP, a remote API, collaboration and native binaries remain
+unimplemented. See [Notes acceptance and SDK gaps](docs/NOTES-VERTICAL.md).
 
 ## Repository structure
 
@@ -27,15 +40,20 @@ not MCP integration. See [Notes acceptance and SDK gaps](docs/NOTES-VERTICAL.md)
 objects/       Domain facts and policy references
 commands/      Declarative changes interpreted by DESERT
 journeys/      Activities named *.journey.ts
-views/         Reserved for reusable *.view.ts declarations
+views/         Typed *.view.ts declarations and validated registry
 tests/         Independent contract and real-runtime checks
 docs/          Roadmap, acceptance and release requirements
 ```
 
-The shared view-definition API is not installed in DESERT yet. The requested
-`views/visualCatalog.view.ts` is a tracked next step, not a fake constructor or
-handwritten page. The web Visual catalog will consume the same registered
-primitives as the product.
+Start at [`experience.ts`](experience.ts): destinations, navigation, Views and
+journey bindings are composed as data. Each `*.view.ts` is a `View` object.
+DESERT binds canonical forms/collections, renders its shared components and
+executes admitted operations. VOID supplies no HTML, CSS or private renderer.
+`views/visualCatalog.view.ts` mounts DESERT's existing interactive web catalog.
+See the [code anatomy and reading order](docs/ANATOMY.md).
+The [target architecture](docs/MODULE-ANATOMY.md) consolidates capability modules,
+typed navigation and ownership rules; it is not an installed module API or a
+completed source reorganization.
 
 ## Local verification
 
@@ -59,12 +77,31 @@ and remove their own temporary PostgreSQL clusters using Unix sockets. They do
 not connect to an existing database or require provider credentials.
 The current host proof is macOS; other platforms remain unqualified.
 
+To build and run the local web workspace:
+
+```sh
+npm run web:build -- build/void-web
+npm run dev -- build/void-web
+```
+
+Build destinations must be fresh. The host prints its loopback address and the
+path to a private `web-launch.json`; open that file's one-use URL locally.
+Credentials and notes remain in `.local/void` across restarts. Do not share the
+launch URL or identity file. Existing stores with missing/invalid credentials
+fail closed rather than silently replacing the identity.
+
+Browser acceptance uses an isolated store, never your workspace:
+
+```sh
+VOID_WEB_BUILD="$PWD/build/void-web" npm run test:web
+```
+
 The tested SDK revision and exact scope are recorded in
 [verification](docs/VERIFICATION.md).
 
 ## Direction
 
-The delivery order is **Notes → System → Appearance → User → Connections →
+The delivery order is **Notes → System → Appearance → Identity → Connections →
 Environments → Tasks**. VOID CLI will bridge available providers in enrolled
 environments, queue work and enforce a limit per environment-bound actor.
 These are roadmap requirements, not features implied by the N0 tests.

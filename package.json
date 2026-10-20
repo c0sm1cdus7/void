@@ -9,8 +9,11 @@
     "node": ">=24"
   },
   "scripts": {
+    "web:build": "node scripts/build-web.ts",
+    "dev": "node scripts/run-local.ts",
     "typecheck": "tsc --noEmit",
     "test": "node --test --test-concurrency=1 --test-timeout=30000 tests/*.test.ts",
+    "test:web": "node --test --test-concurrency=1 --test-timeout=45000 tests/web/*.test.ts",
     "check": "npm run typecheck && npm test"
   },
   "dependencies": {
@@ -20,6 +23,7 @@
     "@types/node": "24.19.2",
     "@types/pg": "8.23.1",
     "pg": "8.23.1",
+    "playwright": "1.64.1",
     "typescript": "5.9.3"
   }
 }

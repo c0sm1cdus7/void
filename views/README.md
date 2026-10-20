@@ -5,14 +5,15 @@ from `journeys/*.journey.ts`. Views declare typed information and output ports;
 journeys bind them to activities. No product-owned markup, CSS or callbacks that
 draw may appear here.
 
-The first planned declarations are:
+Five declarations now mount through `../experience.ts`: Home, Notes, note
+editor, note detail and Visual catalog. `index.ts` validates their registry.
+Each object satisfies the shared SDK `View` type and runtime validator.
 
-- `notes.view.ts`: the Notes destination.
-- `noteEditor.view.ts`: a reusable editor, independent of create/edit journeys.
-- `visualCatalog.view.ts`: the **Visual catalog** destination displaying the web
-  surface's registered primitives and compositions.
+Views name input/output ports, not commands. Journey bindings supply canonical
+forms, collections and authorized context. The editor is currently bound only
+to create; editing is not implemented. Visual catalog reuses the SDK inspection
+owner and never executes product commands.
 
-These files must use the shared DESERT view contract when it is installed.
-The current SDK does not yet supply that API; N0 tests the existing execution
-foundation without inventing a private view engine or pretending a placeholder
-is a rendered view.
+The executable program is deliberately finite. Unsupported docks, media,
+bindings and extra styling properties fail validation. General module
+composition is still a target, not permission to introduce product rendering.

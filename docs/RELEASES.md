@@ -35,6 +35,13 @@ cross-store publication cannot be promised atomic.
 
 ## Current bootstrap
 
+The owner-approved `n1-stable` checkpoint preserves the local web experience on
+`codex/notes-foundation`, paired with DESERT `v128a-stable`. Its
+`releases/n1-stable.json` records the exact SDK commit and verified build digests.
+It is a source recovery tag, not a production version, native release, binary
+publication or push to `main`. Existing local data and the previous approved
+DESERT baseline are untouched.
+
 This policy is recorded, not an installed pipeline. The first branch is
 `codex/notes-foundation`; no push to `main`, release tag, store submission, cloud
 deployment or native binary is part of the N0 proof.
