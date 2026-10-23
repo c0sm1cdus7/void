@@ -9,7 +9,7 @@ export const ImportImage = mutationJourney("import-image", ImportImageRecord, {
   controller: MediaController, dependencies: [],
 });
 
-export const ImportImageExperience = {
+export const ImportImageJourney = {
   id: ImportImage.id, kind: "create", source: ReadImages, view: ImportImageView, preferredDock: "right",
   presentation: "transient", startWith: chooseFile(ImportImageRecord, "image"),
   initializeFrom: { input: "collections", source: ReadCollections },

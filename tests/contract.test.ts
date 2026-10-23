@@ -6,7 +6,7 @@ import { compile as compileContract } from "desert-sdk/src/compile.ts";
 import { CreateNote } from "../src/modules/notes/journeys/createNote.journey.ts";
 import { ReadNotes } from "../src/modules/notes/journeys/browseNotes.journey.ts";
 import { EditNote } from "../src/modules/notes/journeys/editNote.journey.ts";
-import { VoidHumanSurface } from "../src/surfaces.ts";
+import { VoidHumanExposure } from "../src/exposures.ts";
 import { VOID, VoidProduct } from "../src/void.product.ts";
 
 test("Notes, Tasks, projects and collections share canonical authority; only human sessions upload media", () => {
@@ -55,7 +55,7 @@ test("the approved recovery manifest retains its historical identity and the cur
 });
 
 test("VOID derives field presentation and human review without authored surface maps", () => {
-  assert.deepEqual(Object.keys(VoidHumanSurface).sort(), ["id", "journeys", "kind", "locale"]);
+  assert.deepEqual(Object.keys(VoidHumanExposure).sort(), ["id", "journeys", "kind", "locale"]);
   const human = VOID.surfaces?.find(surface => surface.kind === "human");
   assert.ok(human?.kind === "human");
   assert.deepEqual(human.fieldRepresentations, { "note.title": "text", "note.body": "paragraphs", "note.state": "text",
@@ -82,10 +82,10 @@ test("VOID derives field presentation and human review without authored surface 
 });
 
 test("VOID navigation is owned only by its View program", () => {
-  const human = compile(VoidProduct).surface(VoidHumanSurface.id);
+  const human = compile(VoidProduct).surface(VoidHumanExposure.id);
   assert.equal(Object.hasOwn(human, "navigation"), false);
   for (const key of ["entry", "primaryAction", "subjectActions"]) {
-    assert.equal(Object.hasOwn(VoidHumanSurface, key), false);
+    assert.equal(Object.hasOwn(VoidHumanExposure, key), false);
   }
 });
 

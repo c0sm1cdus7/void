@@ -59,7 +59,7 @@ unfinished. See [overnight decisions and verification](docs/OVERNIGHT-2026-10-22
 ```text
 src/void.product.ts       Single product composition
 src/navigation.ts         Destination selection and order
-src/surfaces.ts           Human and agent exposure
+src/exposures.ts           Human and agent exposure
 src/modules/notes/        Note, commands, journeys and views together
 src/modules/tasks/        Task, typed Project labels, commands, journeys and views
 src/modules/system/       Live controller evidence and contract inventory

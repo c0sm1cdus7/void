@@ -7,7 +7,7 @@ import { ReadCollections } from "./readCollections.journey.ts";
 import { ReadImages } from "./readImages.journey.ts";
 import { ImportImage } from "./importImage.journey.ts";
 import { SetMediaCollections } from "./setMediaCollections.journey.ts";
-export const ReadCollectionsExperience = { id: ReadCollections.id, kind: "read", presentation: "main",
+export const ReadCollectionsJourney = { id: ReadCollections.id, kind: "read", presentation: "main",
   view: CollectionsView, detailView: CollectionDetailView,
   related: [{ input: "media", read: ReadImages, layout: factReference(MediaCollection, "layout"),
     membership: { update: SetMediaCollections, input: "collections" },

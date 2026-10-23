@@ -5,7 +5,7 @@ import { MediaController } from "../media.dependencies.ts";
 import { CollectionEditorView } from "../views/collectionEditor.view.ts";
 import { ReadCollections } from "./readCollections.journey.ts";
 export const EditCollection = mutationJourney("edit-media-collection", EditCollectionRecord, { controller: MediaController, dependencies: [] });
-export const EditCollectionExperience = { id: EditCollection.id, kind: "update", source: ReadCollections,
+export const EditCollectionJourney = { id: EditCollection.id, kind: "update", source: ReadCollections,
   view: CollectionEditorView, preferredDock: "right", presentation: "transient",
   initialize: [initializeInput(EditCollectionRecord, "title", factReference(MediaCollection, "title")),
     initializeInput(EditCollectionRecord, "layout", factReference(MediaCollection, "layout")),

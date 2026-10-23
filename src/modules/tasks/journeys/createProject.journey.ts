@@ -7,7 +7,7 @@ export const CreateProject=mutationJourney('create-project',createCommand('creat
   input:['name','color'],values:{name:fromInput('name'),color:fromInput('color'),owner:actorId()}}),
   {controller:TasksController,dependencies:[]});
 
-export const CreateProjectExperience={id:CreateProject.id,kind:'create',source:ReadProjects,view:ProjectEditorView,
+export const CreateProjectJourney={id:CreateProject.id,kind:'create',source:ReadProjects,view:ProjectEditorView,
   preferredDock:'right',outputs:[
     {...viewOutput(ProjectEditorView,'save'),action:{kind:'submit'}},
     {...viewOutput(ProjectEditorView,'close'),action:{kind:'close'}},

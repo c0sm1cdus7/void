@@ -9,7 +9,7 @@ import { compile } from "desert-sdk/src/index.ts";
 import { serveIdentityHost } from "desert-sdk/src/local/identity-host.ts";
 import { VoidViewProgram, VoidProduct } from "../../src/void.product.ts";
 import { Dependencies } from "../../src/modules.ts";
-import { VoidHumanSurface } from "../../src/surfaces.ts";
+import { VoidHumanExposure } from "../../src/exposures.ts";
 import { localMedia } from "../../scripts/local-media.ts";
 import { privateImages } from "../../scripts/private-images.ts";
 import { choosePrivateImage } from "./media-ui.ts";
@@ -21,7 +21,7 @@ test("the real protected VOID build persists private Notes and images, locks off
   let host: Awaited<ReturnType<typeof serveIdentityHost>> | undefined;
   try {
     host = await serveIdentityHost({ application: compile(VoidProduct),
-      roles: [Dependencies.notes.id, Dependencies.tasks.id, Dependencies.media.id], surfaceId: VoidHumanSurface.id,
+      roles: [Dependencies.notes.id, Dependencies.tasks.id, Dependencies.media.id], surfaceId: VoidHumanExposure.id,
       directory, privateImages: privateImages(directory), buildDirectory: resolve(process.env.VOID_WEB_BUILD), port: 0,
       ...localMedia(VoidViewProgram) });
     const context = await browser.newContext({ viewport: { width: 1600, height: 1000 }, colorScheme: "dark" });

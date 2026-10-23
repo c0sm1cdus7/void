@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { view, moduleCatalog } from "desert-sdk/src/index.ts";
+import { view, moduleIndex } from "desert-sdk/src/index.ts";
 import { MediaModule } from "../src/modules/media/media.module.ts";
 import { ImagesView } from "../src/modules/media/views/images.view.ts";
 import { ImportImageRecord } from "../src/modules/media/commands/importImage.command.ts";
@@ -24,7 +24,7 @@ test("Add media opens the native picker before a transient import and images hav
   assert.deepEqual(journey.startWith, { kind: "file-picker", input: "image" });
   assert.equal(journey.presentation, "transient");
   assert.deepEqual(ImportImageRecord.input, ["image", "fit", "description", "collections"]);
-  assert.equal(Object.keys(moduleCatalog([MediaModule]).commands).includes("renameImage"), false);
+  assert.equal(Object.keys(moduleIndex([MediaModule]).commands).includes("renameImage"), false);
 });
 
 test("Media remains a typed catalog composition with no product styling escapes", () => {

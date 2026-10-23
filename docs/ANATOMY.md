@@ -4,8 +4,8 @@ VOID declares a product; DESERT validates, executes and renders it. Views are
 typed data, not UI components. The capability migration is installed under
 `src/`; this document maps actual files rather than a proposed tree.
 
-`VoidHumanSurface` and `VoidAgentSurface` name interaction exposure, not separate
-Notes applications. `surfaces.ts` no longer declares an initial read, primary
+`VoidHumanExposure` and `VoidAgentExposure` name interaction exposure, not separate
+Notes applications. `exposures.ts` no longer declares an initial read, primary
 action, subject-action list, field/label maps or submission/review maps. Composed
 human exposure accepts only `id`, execution journey objects and `locale`.
 The Product's Home entry and journey bindings are the only navigation owner.
@@ -24,7 +24,7 @@ owners. Public catalogs contain SDK-issued object references. Consumers use
 src/
 ├── void.product.ts                  One root: mounted modules + Workspace + Home
 ├── navigation.ts                    Destination references, groups, purpose and order
-├── surfaces.ts                      Human and agent journey exposure
+├── exposures.ts                      Human and agent journey exposure
 ├── modules.ts                       Derived public references from mounted manifests
 ├── views/workspace.view.ts          Root: Navigation View in leftDock + active destination
 ├── views/navigation.view.ts         Product identity + the declared destination list
@@ -123,7 +123,7 @@ contract digest. It does not read notes or execute commands.
 
 ## Human semantics, declared with their owners
 
-In [`surfaces.ts`](../src/surfaces.ts), `ExposedJourneys` selects the public
+In [`exposures.ts`](../src/exposures.ts), `ExposedJourneys` selects the public
 execution references from [`modules.ts`](../src/modules.ts). This excerpt shows
 the Notes create/read/edit subset; the actual exposures also include Trash/Restore,
 Tasks and private image reads. Import image is human-only until an actual binary
@@ -132,14 +132,14 @@ agent acquisition mechanism exists:
 ```ts
 const ExposedJourneys = [Journeys.createNote, Journeys.readNotes, Journeys.editNote];
 
-export const VoidHumanSurface = humanSurface({
+export const VoidHumanExposure = humanExposure({
   id: "human",
   journeys: ExposedJourneys,
   locale: "en",
 });
 ```
 
-`moduleCatalog([...mountedManifests])` derives `Journeys`, `Views`, `Commands`,
+`moduleIndex([...mountedManifests])` derives `Journeys`, `Views`, `Commands`,
 `Destinations` and `Dependencies` from
 the manifests' public exports. These are projections of one catalog, not manually
 maintained registries. Commands derive from exported mutation journeys; a command
@@ -172,13 +172,13 @@ registers these execution/presentation pairs once:
 
 ```ts
 [
-  { execution: CreateNote, presentation: CreateNoteExperience, label: "Create note", humanReview: "not-required" },
-  { execution: ReadNotes, presentation: ReadNotesExperience, label: "Notes" },
-  { execution: EditNote, presentation: EditNoteExperience, label: "Edit note", humanReview: "not-required" },
+  { execution: CreateNote, presentation: CreateNoteJourney, label: "Create note", humanReview: "not-required" },
+  { execution: ReadNotes, presentation: ReadNotesJourney, label: "Notes" },
+  { execution: EditNote, presentation: EditNoteJourney, label: "Edit note", humanReview: "not-required" },
 ]
 ```
 
-[`compileSurfaceExposures`](../../desert/src/modules/compile-surfaces.ts) derives
+[`compileExposures`](../../desert/src/modules/compile-exposures.ts) derives
 canonical `language`, `fieldRepresentations` and `commit` maps from these owners before
 the SDK's internal wire compilation. Public hosts/builds call `compile(VoidProduct)`,
 not `compile(VOID)`. `paragraphs` maps to the existing multiline reading presentation;

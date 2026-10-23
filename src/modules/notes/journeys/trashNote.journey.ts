@@ -7,6 +7,6 @@ export const TrashNote = mutationJourney("trash-note", TrashNoteRecord, {
   controller: NotesController, dependencies: [],
 });
 
-export const TrashNoteExperience = {
+export const TrashNoteJourney = {
   id: TrashNote.id, kind: "action", source: ReadNotes, outputs: [],
 } satisfies ViewJourney;

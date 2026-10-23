@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { agentSurface, compile, composeProduct, Components, defineView, humanSurface, moduleCatalog,
+import { agentExposure, compile, composeProduct, Components, defineView, humanExposure, moduleIndex,
   type ViewDestination, type ViewJourney } from "desert-sdk/src/index.ts";
 import { NotesModule } from "../src/modules/notes/notes.module.ts";
 import { Commands, Journeys, Modules, Views } from "../src/modules.ts";
@@ -83,12 +83,12 @@ test("the storyboard shows Note detail to Edit from the object's one published a
 });
 
 test("Notes mounts without Home or Visual catalog when its host provides a real activity resume destination", () => {
-  const modules = moduleCatalog([NotesModule]);
+  const modules = moduleIndex([NotesModule]);
   const journeys = Object.values(modules.journeys);
   const base = {
     id: "void", label: "VOID", modules,
     views: [WorkspaceView, NavigationView] as const, workspace: WorkspaceView,
-    surfaces: [humanSurface({ id: "human", journeys, locale: "en" }), agentSurface("agent", journeys)],
+    exposures: [humanExposure({ id: "human", journeys, locale: "en" }), agentExposure("agent", journeys)],
     entry: modules.destinations.Notes,
     navigation: [{ destination: modules.destinations.Notes, group: "Explore", purpose: "content" }] as const,
   };

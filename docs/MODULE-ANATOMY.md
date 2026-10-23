@@ -28,7 +28,7 @@ A module may provide several destinations, Views or none.
 
 Use **visual surface** for a frame with content/docks, **interaction exposure**
 for offered human/agent execution, and **channel** for transports such as
-HTTP/MCP. The installed API calls exposure `SurfaceDefinition`; renderer,
+HTTP/MCP. The installed API calls exposure `ExposureDefinition`; renderer,
 distribution and deployment remain distinct.
 
 ## Installed anatomy
@@ -42,7 +42,7 @@ src/
 ├── void.product.ts                 Single composition root
 ├── modules.ts                      Derived public reference catalogs
 ├── navigation.ts                   Destination groups, purpose and order
-├── surfaces.ts                     Human/agent exposure, not navigation
+├── exposures.ts                     Human/agent exposure, not navigation
 ├── views/
 │   ├── workspace.view.ts           Optional left dock + destination outlet
 │   ├── navigation.view.ts          Identity + declared navigation
@@ -79,7 +79,7 @@ The withdrawn mandatory `x.views.ts`/`x.journeys.ts` aggregation is not adopted.
 
 1. A module registers definitions once and selects its public contracts by object
    reference. Modules never import another module or the root catalog.
-2. `moduleCatalog(...)` derives public Journeys, Views, Commands, Destinations and
+2. `moduleIndex(...)` derives public Journeys, Views, Commands, Destinations and
    Dependencies. Commands derive from exported execution journeys.
 3. The Product mounts the catalog and adds its own compositions. Root consumers
    use issued references such as `Journeys.createNote`, not string lookups.

@@ -52,7 +52,7 @@ note.object.ts + note.publication.ts
   → DESERT                       canonical controller + shared web catalog
 ```
 
-`surfaces.ts` exposes the same seven Notes execution journeys to human and agent
+`exposures.ts` exposes the same seven Notes execution journeys to human and agent
 sessions. DESERT has real HTTP and MCP stdio adapters; this is stronger than the
 original N0 in-process exposure proof. It does not imply that VOID installs an
 agent OAuth service, that the visual navigator is remotely serializable, or

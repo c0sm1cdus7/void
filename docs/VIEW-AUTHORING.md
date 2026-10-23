@@ -57,7 +57,7 @@ admitted image, video and audio entries; this does not imply authenticated uploa
 `defineView`, `Components`, `ViewTitles` and `viewPorts` are the authoring API.
 The Notes declaration imports them without product-owned UI or validators.
 Its toolbar declares a `create` output, not a journey ID or an executable callback.
-`ReadNotesExperience` binds that output to the existing create journey, which
+`ReadNotesJourney` binds that output to the existing create journey, which
 opens `noteEditor.view.ts` with a right-dock preference.
 
 The contract validates ordered content, titled Stacks, permitted dock kinds,

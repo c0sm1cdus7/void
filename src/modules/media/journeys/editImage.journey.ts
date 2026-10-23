@@ -7,7 +7,7 @@ import { ReadImages } from "./readImages.journey.ts";
 
 export const EditImage = mutationJourney("edit-image", EditImageRecord, { controller: MediaController, dependencies: [] });
 
-export const EditImageExperience = {
+export const EditImageJourney = {
   id: EditImage.id, kind: "update", source: ReadImages, view: EditImageView, preferredDock: "right", presentation: "transient",
   initialize: [initializeInput(EditImageRecord, "fit", factReference(PrivateImage, "fit")),
     initializeInput(EditImageRecord, "description", factReference(PrivateImage, "description")),

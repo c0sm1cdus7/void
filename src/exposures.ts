@@ -1,4 +1,4 @@
-import { agentSurface, humanSurface } from "desert-sdk/src/index.ts";
+import { agentExposure, humanExposure } from "desert-sdk/src/index.ts";
 import { Journeys } from "./modules.ts";
 
 const ExposedJourneys = [Journeys.createNote, Journeys.readNotes, Journeys.editNote,
@@ -7,10 +7,10 @@ const ExposedJourneys = [Journeys.createNote, Journeys.readNotes, Journeys.editN
   Journeys.readImages, Journeys.readImageTrash, Journeys.editImage, Journeys.trashImage, Journeys.restoreImage,
   Journeys.readCollections, Journeys.createCollection, Journeys.editCollection, Journeys.setMediaCollections];
 
-export const VoidHumanSurface = humanSurface({
+export const VoidHumanExposure = humanExposure({
   id: "human",
   journeys: [...ExposedJourneys, Journeys.importImage],
   locale: "en",
 });
 
-export const VoidAgentSurface = agentSurface("agent", ExposedJourneys);
+export const VoidAgentExposure = agentExposure("agent", ExposedJourneys);

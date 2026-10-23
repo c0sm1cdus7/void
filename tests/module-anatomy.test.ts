@@ -8,7 +8,7 @@ const root = fileURLToPath(new URL("../", import.meta.url));
 
 test("VOID has one product root and capability-owned declarations, not parallel registries", () => {
   for (const path of [
-    "src/void.product.ts", "src/navigation.ts", "src/surfaces.ts", "src/modules.ts",
+    "src/void.product.ts", "src/navigation.ts", "src/exposures.ts", "src/modules.ts",
     "src/modules/notes/notes.module.ts", "src/modules/notes/note.object.ts",
     "src/modules/notes/note.publication.ts",
     "src/modules/notes/commands/createNote.command.ts",

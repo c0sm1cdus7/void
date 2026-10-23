@@ -8,7 +8,7 @@ import { openDeveloperHost } from "desert-sdk/src/local/developer-host.ts";
 import { serveBuiltLocalSurface } from "desert-sdk/src/build/serve.ts";
 import { VoidViewProgram, VoidProduct } from "../../src/void.product.ts";
 import { Dependencies } from "../../src/modules.ts";
-import { VoidHumanSurface } from "../../src/surfaces.ts";
+import { VoidHumanExposure } from "../../src/exposures.ts";
 import { ReadNotes } from "../../src/modules/notes/journeys/browseNotes.journey.ts";
 import { localMedia } from "../../scripts/local-media.ts";
 import { privateImages } from "../../scripts/private-images.ts";
@@ -38,7 +38,7 @@ export async function browserFixture(options: { hasTouch?: boolean } = {}) {
   }
   try {
     const host = await openDeveloperHost({ application: compile(VoidProduct), roles: [Dependencies.notes.id, Dependencies.tasks.id, Dependencies.media.id],
-      surfaceId: VoidHumanSurface.id, directory, privateImages: privateImages(directory) });
+      surfaceId: VoidHumanExposure.id, directory, privateImages: privateImages(directory) });
     cleanup.push(() => host.close());
     const server = await serveBuiltLocalSurface({ session: host.session,
       buildDirectory: resolve(process.env.VOID_WEB_BUILD), port: 0, ...localMedia(VoidViewProgram) });

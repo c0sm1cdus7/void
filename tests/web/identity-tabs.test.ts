@@ -10,7 +10,7 @@ import { openControllerHost } from "desert-sdk/src/local/controller-host.ts";
 import { serveBuiltIdentitySurface } from "desert-sdk/src/build/serve.ts";
 import { VoidProduct, VoidViewProgram } from "../../src/void.product.ts";
 import { Dependencies } from "../../src/modules.ts";
-import { VoidHumanSurface } from "../../src/surfaces.ts";
+import { VoidHumanExposure } from "../../src/exposures.ts";
 import { CreateNote } from "../../src/modules/notes/journeys/createNote.journey.ts";
 import { ReadNotes } from "../../src/modules/notes/journeys/readNotes.journey.ts";
 import { localMedia } from "../../scripts/local-media.ts";
@@ -46,20 +46,20 @@ test("another tab's sign-in cannot inherit a prepared activity or publish a late
   try {
     host = await openControllerHost({ application,
       roles: [Dependencies.notes.id, Dependencies.tasks.id, Dependencies.media.id],
-      surfaceId: VoidHumanSurface.id, directory, privateImages: privateImages(directory) });
+      surfaceId: VoidHumanExposure.id, directory, privateImages: privateImages(directory) });
     const administrator = await host.controller.access.initialize({ login: "identity-a", displayName: "Identity A", password });
     await host.controller.access.createIdentity(administrator.token, { login: "identity-b", displayName: "Identity B", password });
     const member = await host.controller.access.signIn({ login: "identity-b", password });
-    const sessionA = host.controller.connect(administrator.token, VoidHumanSurface.id);
-    const sessionB = host.controller.connect(member.token, VoidHumanSurface.id);
-    const program = compileViewProgram(productViewProgram(application), application.surface(VoidHumanSurface.id));
+    const sessionA = host.controller.connect(administrator.token, VoidHumanExposure.id);
+    const sessionB = host.controller.connect(member.token, VoidHumanExposure.id);
+    const program = compileViewProgram(productViewProgram(application), application.surface(VoidHumanExposure.id));
     const guided = program.journeys.find(journey => journey.id === GuidedNote.id);
     assert.ok(guided?.kind === "activity");
     await sessionA.activityCreate(randomUUID(), guided.activity);
     const seed = await sessionB.prepare((await sessionB.begin(CreateNote.id)).id,
       { title: "Only identity B can see this note", body: "Private B witness" });
     await sessionB.accept(seed.id, seed.confirmationDigest);
-    server = await serveBuiltIdentitySurface({ controller: host.controller, surface: VoidHumanSurface.id,
+    server = await serveBuiltIdentitySurface({ controller: host.controller, surface: VoidHumanExposure.id,
       buildDirectory: resolve(process.env.VOID_WEB_BUILD), port: 0, ...localMedia(VoidViewProgram) });
     const context = await browser.newContext({ viewport: { width: 1600, height: 1000 }, colorScheme: "dark" });
     const pageA = await context.newPage(), pageB = await context.newPage();
@@ -84,7 +84,7 @@ test("another tab's sign-in cannot inherit a prepared activity or publish a late
     await panel.getByRole("textbox", { name: "Title", exact: true }).fill("Identity A's uncommitted draft");
     await panel.getByRole("button", { name: "Continue", exact: true }).click();
     await panel.getByRole("textbox", { name: "Content", exact: true }).fill("Must never execute as B");
-    const journalKey = `desert.activity/${application.digest}/${VoidHumanSurface.id}/identity/${administrator.identity.id}`;
+    const journalKey = `desert.activity/${application.digest}/${VoidHumanExposure.id}/identity/${administrator.identity.id}`;
     const journalBefore = await pageA.evaluate(key => sessionStorage.getItem(key), journalKey);
     assert.ok(journalBefore, "the real activity has an identity-scoped persisted journal");
     const prepared = deferred<{ binding: string; intentId: string; confirmationDigest: string }>();

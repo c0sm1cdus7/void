@@ -7,7 +7,7 @@ import { ReadImages } from "./readImages.journey.ts";
 
 export const RenameImage = mutationJourney("rename-image", RenameImageRecord, { controller: MediaController, dependencies: [] });
 
-export const RenameImageExperience = {
+export const RenameImageJourney = {
   id: RenameImage.id, kind: "update", source: ReadImages, view: RenameImageView, preferredDock: "right",
   initialize: [initializeInput(RenameImageRecord, "title", factReference(PrivateImage, "title"))],
   outputs: [

@@ -5,7 +5,7 @@ import { ReadImages } from "./readImages.journey.ts";
 import { ImportImage } from "./importImage.journey.ts";
 import { ReadImageTrash } from "./readImageTrash.journey.ts";
 
-export const ReadImagesExperience = {
+export const ReadImagesJourney = {
   id: ReadImages.id, kind: "read", view: ImagesView, detailView: ImageDetailView,
   outputs: [
     { ...viewOutput(ImagesView, "import"), action: { kind: "journey", journey: ImportImage } },
