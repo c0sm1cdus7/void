@@ -1,91 +1,111 @@
-# Media destination
+# Media
 
-Owner direction recorded on 2026-10-20. This is a product requirement and design
-proposal, not an installed library or playback implementation.
+Current product contract after the approved walkthrough of 2026-10-22. Earlier
+sample-gallery decisions in `MEDIA-PLAYBACK-DECISIONS.md` are historical evidence,
+not the installed product UX. Exact executed build/test evidence is tracked in
+the walkthrough delivery record; a test's presence is not evidence it passed.
 
-## Preserve the approved anatomy
+## One private library
 
-Bring the Landmarks browsing experience into VOID as **Media**. Preserve the
-approved surface, shared header, title/subtitle docking, cover carousel, titled
-horizontal collections and media viewer. Do not revive a separate Hero
-primitive or copy Landmarks product code into VOID.
+The destination is **Media**. It reads the identity's real collections and media;
+it does not mount the old continent/Studio sample gallery or a second “My images”
+destination. A visible content header owns its title; the shared toolbar takes
+over only after the header scrolls away.
 
-The owner clarified that "capas" means **covers/artwork**, not stacked layers.
-The header presents covers of child albums. Content also groups items by
-Videos, Music (with cover artwork) and Images. Albums organize content;
-media types classify the same items, without duplicating stored assets.
+The only creation entry is `+`. It opens the native file chooser directly,
+filtered to installed formats. Cancelling creates no draft or activity. After
+choosing a file, an explicitly transient (never docked) surface provides
+presentation, optional description and collection membership. Images have no
+title field. Collections have names and may contain images, video and audio.
 
-The existing ordered roadmap still starts with Notes. Media is an additional
-destination; its implementation priority relative to System and later verticals
-has not been changed.
+Opening a collection navigates to its main content page. Its editor is reached
+inside that collection; a media item's editor is reached inside its viewer.
+Closing a member returns to the originating collection. Native selection begun
+inside a collection initializes that collection in the new media draft, but a
+late chooser result cannot apply after its origin changes.
 
-## Navigation proposal
+## Canonical storage and editing
 
-- A child-album cover opens that album, rather than unexpectedly opening its
-  cover image as if it were the album's content.
-- An individual media item opens the shared viewer at that item.
-- Closing the viewer returns to the originating album/collection and position.
-- The viewer's thumbnail sequence comes from the collection that opened it,
-  not an unrelated global queue. Mixed collections retain their explicit order.
-- Album ancestry is independent of media type. Cycles, empty albums and a
-  cover reference that becomes inaccessible need explicit shared validation.
+`PrivateImage` retains its historical object ID and hidden legacy `title` fact
+for data compatibility. New imports store an empty legacy title; user-facing
+cards, viewers and search never render it. `image` holds the canonical private
+asset reference, including the server-verified media discriminator for new
+mixed-media uploads. Metadata editing changes `fit`, `description` and
+`collections`, never replaces or rewrites the binary.
 
-The first bullet changes the old header-photo action and is a proposal to
-confirm, not a consequence inferred from identical geometry.
+`MediaCollection` owns `title`, `layout` (`grid` or `list`) and optional `cover`.
+The one source of membership truth is `PrivateImage.collections`; the collection
+page uses an admitted inverse relation, not a second independently stored list.
+Cover choices are authorized, active image members of that collection. The
+default cover is its first available image; video/audio-only collections use the
+shared neutral artwork state. Removing a selected cover member clears the cover
+draft back to automatic.
 
-## One media viewer
+Membership checkboxes are local draft changes. **Cancel writes nothing.** Save
+first accepts the collection metadata through its canonical command, then saves
+changed memberships through their version-bound commands. This is deliberately
+not described as an atomic multi-object transaction: if interrupted, the editor
+stays open, confirmed changes are retained, and explicit recovery continues only
+unfinished operations. An uncertain acceptance checks the same receipt/intent;
+successful writes are not replayed. Closing or editing a partially saved draft
+is blocked until the operation is resolved. Identity/availability loss revokes
+private pixel authority even while the recoverable operation is retained.
 
-Use one shell for images, video and audio:
+Move to Trash uses shared confirmation; Restore uses the undo icon. Trash and
+restore preserve asset bytes and references. They neither purge files nor reclaim
+quota. Ownership and active/trashed read predicates remain canonical.
 
-- Top dock: Close first, then title and secondary information/count.
-- Canvas: a contained image, video at its native aspect ratio, or audio cover
-  artwork. No stretching or fabricated cover image.
-- Bottom dock: one thumbnail strip, with capability-appropriate media controls
-  alongside it. Photo zoom remains available; timed media adds play/pause,
-  seek/time and volume controls. Captions are available when supplied.
-- On compact widths, the same bottom dock can allocate a second row instead
-  of shrinking controls, clipping the strip or creating another viewer design.
-- Keyboard, pointer and touch offer equivalent actions. Do not rely only on
-  swipes; preserve focus return and a discoverable way to close.
+## Private files and playback
 
-No automatic audio playback. Changing the selected media stops the old playback
-before preparing the next item. Closing stops playback unless a separate
-background-playback contract is explicitly introduced later.
+The installed bounded pipeline accepts JPEG, PNG, WebP, MP4 (H.264 video/AAC
+audio), MP3 and WAV, with a 20 MiB per-file limit. The chooser filter is not a
+security check: the server validates bytes, metadata, codecs, quotas and the
+authorized run/input before accepting a durable reference. Original bytes are
+preserved. Images get bounded metadata-free WebP renditions; timed media is
+served as the original and is not transcoded. Codec playback still depends on
+the browser; unsupported/decode failures remain explicit.
 
-Preserve silent neutral loading and identity-keyed readiness: never show a
-previous item's pixels while a new item is pending. Failures must remain
-distinguishable from an indefinitely empty canvas and offer recovery.
-Preserve originals; generate appropriately sized image previews/thumbnails and
-video posters. Audio uses supplied artwork or the shared missing-artwork state.
-Caching/prefetch must respect authority and network/device constraints.
+Every original/rendition request checks the authorized read, identity, published
+field and accepted link. Scoped object URLs are revoked on closure, authority
+loss and disposal. Late responses cannot replace a newer item's pixels. Private
+bytes never enter the old public sample-media route. The CSP admits only same-
+origin and local blob media sources, without opening arbitrary remote playback.
+Browser byte reads share a bounded two-transfer queue, below the host's four-read
+limit. Waiting reads retain cancellation and a total deadline; temporary transfer
+contention retries only the same authorized GET. Session ownership is checked
+again before every request and after bytes arrive. No private-byte cache is added.
 
-## SDK ownership and gaps
+Video/audio use the shared viewer's explicit play/pause, seek and volume/mute
+controls, with no autoplay or background playback. Closing pauses the player and
+releases its source. All media rendering, forms, collections, cover selectors,
+membership selectors, responsive behavior and attention markers are closed SDK
+owners represented in the visual bank; VOID supplies typed declarations, no CSS
+or custom drawing callbacks.
 
-VOID provides authorized album/item data and typed intents. DESERT owns the
-catalog components, layout, playback state, gestures, loading, rendition policy
-and responsive rules. No product-defined CSS, callbacks that draw, styling
-overrides or competing image/video/audio viewer compositions.
+## Compatibility and deliberate limits
 
-Required shared contracts, not yet installed:
+Existing private-image records require only additive defaults: `fit="fill"`,
+`description=""`, `collections=[]`. Legacy titles/assets/identities remain
+unchanged. Any store upgrade must use the documented isolated migration path;
+the live user store must not be reset or repinned to make a build appear healthy.
 
-1. Album identity, child references, ordered item references and explicit cover.
-2. Discriminated media items: image, video and audio, with typed sources,
-   available renditions/artwork and playback capabilities.
-3. Reusable Media/Album views and journeys using the closed view contract.
-4. One generalized viewer composition and shared bottom media toolbar.
-5. Playback lifecycle, seek/duration, audio/volume, captions and input parity.
-6. Library persistence, imports, access policy and deletion/revocation behavior.
+Nested collections, video poster generation/transcoding, user-authored captions,
+background playback, permanent deletion and quota reclamation are not implied
+by this increment. Binary import is human-only until an actual agent acquisition
+capability is installed. Native OS/browser coverage is reported separately from
+the tested Chromium flows.
 
-The current SDK viewer accepts photos only. Header video support is not a
-mixed-media viewer. Local human/agent session tests do not prove this destination,
-MCP/API support, media playback or native behavior.
+The shared metadata form currently exposes “Thumbnail fit” for every media kind;
+it affects image thumbnails only, not audio/video playback. Hiding it by media
+kind needs an admitted conditional-form contract, which does not exist yet. No
+product-specific conditional rendering or alternate form was added to bypass the
+visual bank. This is a known secondary-form limitation, not a playback control.
 
-## Asset rights and community
+Canonical coverage lives in `tests/media-collections.test.ts`,
+`tests/private-media.test.ts`, `tests/media-lifecycle.test.ts` and
+`tests/media-navigation-runtime.test.ts`. Browser coverage includes native file
+entry, transient imports, collection Save/Cancel, authorized loading/revocation,
+private audio/video playback, search and lifecycle at narrow and wide widths.
 
-The Apple Landmarks sample's software license excludes its photographs.
-Do not publish those photographs, generated derivatives or screenshots containing
-them in VOID under MIT. Preserve the local visual reference; use owner-provided
-or independently verified redistributable fixtures for a public demo.
-
-VOID's MIT license does not relicense DESERT or third-party media. A local
-mockup is not evidence of public distribution rights.
+The old Apple reference photographs remain local-only visual references. Their
+software sample license does not relicense the photographs for publication.

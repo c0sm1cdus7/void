@@ -1,106 +1,89 @@
 # Notes first vertical
 
-Notes is the first VOID vertical and the test of DESERT's shared view/journey
-architecture. Completion requires a real product, not a renamed local-draft
-demo. The N0 runtime proof below starts that work without claiming the missing
-MCP or collaborative mechanisms. N1 now mounts a local web create/read slice.
+Notes is VOID's first durable capability and a test of DESERT's shared
+view/journey architecture. This document describes the current source as of
+2026-10-22, not the contents of every preserved build. Exact build and browser
+evidence belongs in [verification](VERIFICATION.md) and the
+[current delivery record](OVERNIGHT-2026-10-22.md).
 
-## N1 local web slice
+## Installed product behavior
 
-`experience.ts` composes five typed Views and four presentation/execution
-bindings. Home and Notes share `create-note`; `read-notes` binds the list and
-read-only detail. Visual catalog consumes the existing SDK inspection owner.
-The builder validates and freezes the program before including it in the
-verified web artifact. Unknown or unsupported semantics fail before mounting.
+[`notes.module.ts`](../src/modules/notes/notes.module.ts) registers one private
+Note object, its ownership policy, an execution role, seven Views and seven
+execution journeys: create, read active notes, edit, read Trash, move to Trash
+and restore, plus Guided note using the same create command. The module exports references; it supplies no controller class,
+renderer, CSS or independent business validator.
 
-Canonical command inputs, validation, admission, acceptance and recovery stay
-inside DESERT. The local host retains its private developer identity and
-PostgreSQL store. This is not a production identity or recovery flow.
+- Home and Notes invoke the same creation journey. Create and edit reuse the
+  same typed editor, with explicit source-read and edit-initialization bindings.
+- A note may have an explicitly empty title. The display fallback is never
+  persisted as fabricated content. The schema does not yet model an absent title.
+- The detail title comes from Note's publication and occupies the shared top
+  toolbar. Its icon actions are Edit, Move to Trash and Restore; source-read,
+  controller availability and canonical state guards determine eligibility.
+- The editor requests the shared right-side host. Narrow hosts use the shared
+  bottom transient presentation. These are SDK geometry/motion rules, not
+  product breakpoints or alternate editor implementations.
+- Move to Trash is a recoverable state transition, not hard deletion. It requires
+  human review. Restore returns the same object, content and identity to the
+  active collection. There is no purge, retention timer or automatic cleanup.
+- Active and Trash collections use canonical `where` guards. The controller
+  filters authorized reads; the renderer does not hide forbidden rows locally.
+  State is published for transition review, while ordinary detail reads publish
+  only title/body. Ownership remains internal.
+- Create/edit, Trash and Restore use the same admission, preparation, atomic
+  acceptance and receipt mechanism. Stale edit bases fail; a lost reply recovers
+  the original operation rather than creating a replacement write.
 
-## Required product behavior
+The protected local host uses the SDK's first-admin/sign-in/lock boundary.
+Explicit developer identities remain isolated test fixtures. Notes are private
+to their owner; being the administrator does not authorize reading another
+identity's notes.
 
-- Create notes with or without a title. Never persist a fabricated "Untitled"
-  title to fit a renderer or schema.
-- List, open and edit durable notes under the current identity's authority.
-- Start a reusable creation journey from Home or Notes without duplicating it.
-- Reuse the editor view without embedding journey IDs or command callbacks.
-- Preserve a draft through supported presentation changes and recover the same
-  accepted operation after a lost response.
-- Present the editor in the right dock, with a transient fallback when it does
-  not fit. Keep navigation in the left dock; use shared host geometry and behavior.
-- Reject stale edits instead of silently replacing newer content.
-- Keep notes private initially; add authorized participants and real-time
-  collaboration under an explicit shared policy.
-- Support labels with text/color and meaningful collaboration history.
-- Cover the same applicable journeys on human, MCP and API surfaces.
+## Code path
 
-## N0 runtime proof
+```text
+note.object.ts + note.publication.ts
+  → commands/*.command.ts         declared effects and state guards
+  → journeys/*.journey.ts         execution + typed View bindings
+  → views/*.view.ts               Components values, no execution
+  → notes.module.ts              registration and public references
+  → void.product.ts              composition, workspace, navigation, exposure
+  → DESERT                       canonical controller + shared web catalog
+```
 
-The first executable subset declares create and read journeys through the
-currently installed DESERT API, using `*.journey.ts` filenames. It exercises
-real PostgreSQL, not an in-memory simulation or a private VOID service.
+`surfaces.ts` exposes the same seven Notes execution journeys to human and agent
+sessions. DESERT has real HTTP and MCP stdio adapters; this is stronger than the
+original N0 in-process exposure proof. It does not imply that VOID installs an
+agent OAuth service, that the visual navigator is remotely serializable, or
+that a human draft can resume in a different surface/session.
 
-The proof uses a present-empty title (`""`) as an untitled witness. That is not
-approval of a general absent/optional-fact model. Missing title fields must not
-be silently coerced into empty values by the SDK. The final editing/view contract
-must settle absence versus an explicitly cleared title.
+## Independent acceptance and remaining scope
 
-No edit, participant or external provider command is exposed in N0. A successful
-agent session test establishes shared local authorization, not a working MCP
-server or remote API. No UI or Visual catalog migration is claimed by these tests.
-
-## Independent acceptance
-
-| Case | Required observation |
+| Requirement | Current evidence or limitation |
 | --- | --- |
-| Create untitled | Stored title is empty, not generated copy; content is unchanged. |
-| Submit malformed input | Canonical SDK validation rejects extra/invalid fields; no object/receipt is created. |
-| Create and read | The admitted create commits once; list and detail return declared fields. |
-| Read projection | Ownership/internal fields are not returned merely because they exist in storage. |
-| Private note | Another identity cannot list or read it by guessing its ID. |
-| Credential revocation | Subsequent read/admission/acceptance is denied. |
-| Retry acceptance | Reaccepting the same intent yields the original receipt and one object. |
-| Reopen controller | Data and operation receipt survive controller restart. |
-| Human and agent exposure | Both resolve the same journey IDs and enforce the same applicable contract. |
-| Reused editor | Create/edit bind typed outputs; the view has no knowledge of the invoking journey. |
-| Stale edit base | An editor opened at revision 1 cannot replace revision 2, even if prepare occurs after revision 2 commits. |
-| Post-prepare conflict | Another accepted change invalidates the earlier prepared effect. |
-| Lost reply | Recover the original operation identity, never issue a replacement write blindly. |
-| Invalid visual input | Unknown nodes, class/style/HTML, arbitrary render slots and unbound outputs fail. |
-| Cross-surface resume | Resume the authorized journey state through actual web/MCP/API adapters without resetting through Home. |
+| Empty title, exact content, malformed input rejection | Product runtime cases in [`notes-inputs.test.ts`](../tests/notes-inputs.test.ts). |
+| Ownership and minimal read projection | [`notes-authority.test.ts`](../tests/notes-authority.test.ts); a guessed ID grants no access. |
+| Durable object and receipt after restart | [`notes-persistence.test.ts`](../tests/notes-persistence.test.ts). |
+| Reused editor, original version and stale edits | [`notes-editing.test.ts`](../tests/notes-editing.test.ts) and [browser editing cases](../tests/web/notes-editing.test.ts). |
+| Guarded Trash/Restore, identity preservation, replay and cross-identity rejection | [`notes-trash.test.ts`](../tests/notes-trash.test.ts) and [browser Trash cases](../tests/web/notes-trash.test.ts). |
+| Actual Notes navigation and creation | [Browser Notes cases](../tests/web/notes.test.ts) run against an explicitly selected generated build. |
+| Shared HTTP/MCP execution mechanism | SDK adapter tests cover canonical dispatch; product-level remote deployment and OAuth are not qualified by them. |
+| Cross-surface draft/activity continuation | Not a completed Notes capability. Conditional activities have their own bounded durable runtime, not automatic persistence of this ordinary editor. |
+| Labels, participants and collaboration | Not implemented. Needs typed labels, participation/revocation policy, live content synchronization, conflict/merge semantics and history. |
+| Optional/absent title | Not implemented. Present-empty is a supported value, not a substitute for absence. |
 
-The case table is the target; the verification record must identify which cases
-actually ran. A passing N0 result does not mark the remaining rows complete.
-
-## Shared SDK gaps
-
-1. N1 installs a finite read/create View program and shared web renderer.
-   General module composition, cross-module data binding, authored arbitrary
-   side docks and media-header handoff remain unsupported in this executable
-   subset; unsupported declarations fail. The global catalog ownership audit
-   remains open. Do not confuse this slice with full architecture closure.
-2. The human builder rejects subject mutations with input fields; its mutation
-   client supplies an empty input for subject actions. Editing requires a shared
-   SDK correction, not a private product form.
-3. Preparation currently reads the current stored revision, not the revision
-   originally opened by an editor. Carry and validate the original edit base
-   before preparing, and retain the existing acceptance-time concurrency guard.
-4. The fact vocabulary has no genuine optional/absent title contract.
-5. Participation, revocation, live content subscriptions, collaborative merge
-   and history are not provided by owner-only access or availability polling.
-6. Agent exposure does not install MCP. A qualified remote API and its
-   authentication/continuity contract also remain to be implemented.
-
-Keep actual deficiencies distinct from proposed product choices. TypeScript
-types, filenames, JSON Schema and a storyboard are not execution authority.
+Test source is an executable case, not proof that every current artifact passed
+it. Consult the delivery record for commands, build identity and actual results.
+Neither controller availability polling nor owner-only access is real-time
+collaborative editing. No cross-object transaction or shared note permission is
+introduced by module composition.
 
 ## Delivery safeguards
 
-Use an isolated database for tests. Never repin or erase Notebook or Landmarks
-data to make a new product compile. Do not change `v127a-stable`, its preview,
-approved components or media assets to bootstrap VOID.
-
-The next human-surface decision must use the actual shared components/tokens,
-with a versioned mockup and explicit gaps. No hand-painted substitute that hides
-the missing SDK contract. Keep kernel execution and appearance qualification
-separate, then prove their integration.
+Use isolated databases for tests. Contract changes must not repin or erase an
+existing installation. The owner's explicit 2026-10-21 reset of disposable VOID
+data was a one-time authorized action, not a general migration mechanism.
+Preserve the approved stable builds, source, reference media and visual bank.
+SDK/browser behavior and visual parity need separate evidence; passing schema or
+runtime tests alone does not qualify appearance or a complete Notes product.

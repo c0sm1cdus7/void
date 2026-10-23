@@ -1,0 +1,58 @@
+import assert from "node:assert/strict";
+import { test } from "node:test";
+import { randomUUID } from "node:crypto";
+import { VoidViewProgram } from "../../src/void.product.ts";
+import { browserFixture } from "./fixture.ts";
+
+for (const width of [390, 1600]) test(`Saved guided activity resumes without a duplicate creation entry at ${width}px`, async () => {
+  const f = await browserFixture();
+  try {
+    let created = 0;
+    f.page.on("request", request => { if (new URL(request.url()).pathname === "/api/activityCreate") created++; });
+    await f.page.getByRole("button", { name: "Notes", exact: true }).click();
+    assert.equal(await f.page.getByRole("button", { name: "Guided note", exact: true }).count(), 0);
+    const experience = VoidViewProgram.journeys.find(journey => journey.id === "guided-note");
+    assert.ok(experience?.kind === "activity");
+    const saved = await f.host.session.activityCreate(randomUUID(), experience.activity);
+    await f.page.reload();
+    await f.page.getByRole("button", { name: /Guided note.*Continue where you left off/ }).click();
+    await f.page.setViewportSize({ width, height: 1000 });
+    const panel = f.page.locator("[data-adaptive-surface]");
+    const top = panel.locator('[data-surface-slot="top"]');
+    const title = panel.getByRole("textbox", { name: "Title", exact: true });
+    const body = panel.getByRole("textbox", { name: "Content", exact: true });
+    await title.waitFor();
+    assert.equal(await body.count(), 0);
+    await title.fill(`Guided ${width}`);
+    const footer=panel.locator('[data-toolbar="bottom"][data-toolbar-purpose="steps"]');
+    const previous=await footer.getByRole('button',{name:'Close',exact:true}).boundingBox();
+    const next=await footer.getByRole('button',{name:'Continue',exact:true}).boundingBox();
+    assert.ok(previous && next && Math.abs(previous.width-next.width)<1,'Wizard navigation has equal 50/50 actions');
+    await panel.getByRole("button", { name: "Continue", exact: true }).click();
+    await body.waitFor();
+    assert.equal(await title.count(), 0);
+    assert.deepEqual(await f.records(), []);
+    await f.page.reload();
+    await body.waitFor();
+    assert.equal(created, 0, "resuming and reloading never create another activity");
+    assert.equal((await f.host.session.activityRead(saved.id)).progress.nextStep, 1);
+    await body.fill("First complete answer.");
+    await panel.getByRole("button", { name: "Continue", exact: true }).click();
+    await top.getByText("Review · Guided note", { exact: true }).waitFor();
+    assert.deepEqual(await f.records(), [], "review never writes the note");
+    await top.getByRole("button", { name: "Back", exact: true }).click();
+    await body.waitFor();
+    assert.equal(await body.inputValue(), "First complete answer.");
+    await body.fill("Changed after Back.");
+    await panel.getByRole("button", { name: "Continue", exact: true }).click();
+    await top.getByText("Review · Guided note", { exact: true }).waitFor();
+    await f.screenshot(`guided-note-review-${width}`);
+    const accepted = f.page.waitForResponse(response => new URL(response.url()).pathname === "/api/accept");
+    await panel.getByRole("button", { name: "Guided note", exact: true }).click();
+    assert.equal((await accepted).status(), 200);
+    await panel.getByText("Changed after Back.", { exact: true }).waitFor();
+    assert.deepEqual((await f.records()).map(record => record.facts), [{ title: `Guided ${width}`, body: "Changed after Back." }]);
+    assert.equal(f.operations.filter(operation => operation.operation === "accept").length, 1);
+    assert.deepEqual(f.errors, []);
+  } finally { await f.close(); }
+});

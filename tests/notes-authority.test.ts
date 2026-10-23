@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { CreateNote } from "../journeys/createNote.journey.ts";
-import { ReadNotes } from "../journeys/readNotes.journey.ts";
+import { CreateNote } from "../src/modules/notes/journeys/createNote.journey.ts";
+import { ReadNotes } from "../src/modules/notes/journeys/browseNotes.journey.ts";
 import { openNotesTestHost } from "./support/notes-host.ts";
 
 test("another identity cannot enumerate or read a private note through either exposure", async t => {

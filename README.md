@@ -9,15 +9,24 @@ provider, a private renderer or a completed operating system.
 
 ## Current milestone
 
-**Notes N0** is an executable create/read runtime proof:
+For the current source checkpoint, start with the
+[2026-10-23 external enforcement handoff](docs/HANDOFF-VISUAL-ENFORCEMENT-2026-10-23.md).
+Visual ownership is not qualified. Historical milestone/test totals below do not
+certify this newer checkpoint; the paired private DESERT repository is required.
 
-- Declarative Note object, ownership policy and create/read journeys.
+The current development branch includes:
+
+- Private Notes with creation, reading, editing, reviewed Trash and Restore, plus an optional durable Guided note experience.
+- Personal Tasks with creation, editing, completion/reopening and typed multiple Project labels.
+- System status based on controller evidence, shared device Appearance, and Identity access.
+- The preserved Media gallery with image, video and audio playback.
+- Private local image import with original preservation, optimized renditions, title editing, reviewed Trash and Restore.
 - Real isolated PostgreSQL persistence through DESERT's admitted lifecycle.
 - Empty-title preservation, private access, canonical validation and read projections.
 - Idempotent acceptance, durable receipts and controller/database restart checks.
-- The same journey exposure through local human and agent sessions.
+- Canonical execution shared by local human and agent sessions; image acquisition is browser-only.
 
-The local **N1** increment mounts Home, Notes and Visual catalog through DESERT's
+The workspace mounts Home and the capability destinations through DESERT's
 typed View program. Home and Notes invoke the same create journey; the shared
 right-hand panel becomes transient when it cannot fit. Notes use the durable
 runtime above, not browser-only storage. Catalog specimens stay isolated.
@@ -30,30 +39,59 @@ The owner-approved recovery checkpoint is [`n1-stable`](releases/n1-stable.json)
 paired with DESERT `v128a-stable`. It preserves the local web baseline on a
 development branch; it is not a complete production/native release.
 
-This is a trusted local developer workspace, not production onboarding/login.
-Safe editing, real MCP, a remote API, collaboration and native binaries remain
-unimplemented. See [Notes acceptance and SDK gaps](docs/NOTES-VERTICAL.md).
+The current verified local checkpoint is `void-capabilities-20261022-n` on port
+4400. It uses a new protected development installation for the evolved contract;
+the earlier stable store is preserved rather than silently upgraded. First access
+asks the owner to create the administrator identity and a password of at least
+twelve characters. No default credentials exist. Exact build identity and the
+1441/1441 SDK and 54/54 VOID browser results are recorded in
+[verification](docs/VERIFICATION.md).
+
+The normal local host is protected by first-admin initialization and password
+sign-in, not an automatically issued developer identity. It remains a loopback
+development deployment, not a production security qualification. DESERT also has
+a real stdio MCP adapter for canonical operations. Remote enrollment, collaborative
+Notes, real provider execution, identity recovery/OAuth and native binaries remain
+unfinished. See [overnight decisions and verification](docs/OVERNIGHT-2026-10-22.md).
 
 ## Repository structure
 
 ```text
-objects/       Domain facts and policy references
-commands/      Declarative changes interpreted by DESERT
-journeys/      Activities named *.journey.ts
-views/         Typed *.view.ts declarations and validated registry
-tests/         Independent contract and real-runtime checks
-docs/          Roadmap, acceptance and release requirements
+src/void.product.ts       Single product composition
+src/navigation.ts         Destination selection and order
+src/surfaces.ts           Human and agent exposure
+src/modules/notes/        Note, commands, journeys and views together
+src/modules/tasks/        Task, typed Project labels, commands, journeys and views
+src/modules/system/       Live controller evidence and contract inventory
+src/modules/appearance/   Shared device preferences
+src/modules/identity/     Current identity and session lock
+src/modules/media/        Sample albums/playback and private image lifecycle
+src/modules/visualCatalog/ Shared visual catalog destination
+src/views/                Product-level views such as Home
+src/journeys/             Product-level activities and collaborations
+scripts/                  Checked SDK build, host and inspection entrypoints
+tests/                    Independent contract and real-runtime checks
+docs/                     Roadmap, acceptance and release requirements
 ```
 
-Start at [`experience.ts`](experience.ts): destinations, navigation, Views and
-journey bindings are composed as data. Each `*.view.ts` is a `View` object.
+Start at [`src/void.product.ts`](src/void.product.ts): modules and Home are
+composed as data. Each `*.view.ts` is a `View` object.
 DESERT binds canonical forms/collections, renders its shared components and
 executes admitted operations. VOID supplies no HTML, CSS or private renderer.
-`views/visualCatalog.view.ts` mounts DESERT's existing interactive web catalog.
+`src/modules/visualCatalog/views/visualCatalog.view.ts` mounts DESERT's existing
+interactive web catalog. The SDK derives the definition catalog, storyboard
+and View program from registered modules; there is no parallel manual inventory.
+Public hosts and builders call `compile(VoidProduct)` and derive that composition's
+admitted View program. They cannot accept another program override or fall back
+to a standalone product renderer. Derived `VOID` wire data is for inspection and
+internal protocol tests, not a second product entrypoint.
 See the [code anatomy and reading order](docs/ANATOMY.md).
-The [target architecture](docs/MODULE-ANATOMY.md) consolidates capability modules,
-typed navigation and ownership rules; it is not an installed module API or a
-completed source reorganization.
+The [architecture contract](docs/MODULE-ANATOMY.md) distinguishes installed
+module/source boundaries from remaining runtime and roadmap capabilities.
+
+Run `npm run inspect` to inspect the derived catalog and storyboard. Build,
+host and inspection entrypoints validate every product declaration before
+importing it; the source gate is also part of `npm run check`.
 
 ## Local verification
 
@@ -79,6 +117,10 @@ The current host proof is macOS; other platforms remain unqualified.
 
 To build and run the local web workspace:
 
+The current Media demonstration additionally needs the existing local Apple
+Landmarks reference checkout expected by the SDK. Its photographs are not
+redistributed in VOID, and missing assets fail rather than hiding Media.
+
 ```sh
 npm run web:build -- build/void-web
 npm run dev -- build/void-web
@@ -86,9 +128,13 @@ npm run dev -- build/void-web
 
 Build destinations must be fresh. The host prints its loopback address and the
 path to a private `web-launch.json`; open that file's one-use URL locally.
-Credentials and notes remain in `.local/void` across restarts. Do not share the
-launch URL or identity file. Existing stores with missing/invalid credentials
-fail closed rather than silently replacing the identity.
+Initialize the administrator in the browser, then use that identity's password
+to unlock. The host creates no default account. Identity records, notes and tasks
+remain in the selected private data directory across restarts; no plaintext
+password is stored. Do not share the launch URL. Recovery is not implemented.
+Existing stores reject changed contract/installation revisions. Do not delete or
+repin them: select a fresh directory explicitly, for example
+`npm run dev -- build/void-web .local/void-current 4400`.
 
 Browser acceptance uses an isolated store, never your workspace:
 
@@ -106,9 +152,12 @@ Environments → Tasks**. VOID CLI will bridge available providers in enrolled
 environments, queue work and enforce a limit per environment-bound actor.
 These are roadmap requirements, not features implied by the N0 tests.
 
-[Media](docs/MEDIA.md) will carry forward Landmarks' browsing anatomy with
-albums and one viewer for images, video and music. It is a recorded design
-requirement, not implemented playback or a public redistribution of sample assets.
+[Media](docs/MEDIA.md) restores the approved browsing anatomy: albums, cover
+carousel and the shared viewer. Image zoom, video/audio playback, thumbnails,
+seeking, volume and admitted captions use the same catalog. Authenticated private
+image import and durable image lifecycle are implemented; private albums,
+collection thumbnails and audio/video import remain requirements. Reference
+photographs are not redistributed in this repository.
 
 All work uses branches. `main` is reserved for the intended versioned
 iOS/Android/Linux/Web release pipeline, which is not installed yet.

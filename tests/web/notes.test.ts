@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { Page } from "playwright";
-import { CreateNote } from "../../journeys/createNote.journey.ts";
+import { CreateNote } from "../../src/modules/notes/journeys/createNote.journey.ts";
 import { browserFixture, settleMotion } from "./fixture.ts";
 
 const title = (page: Page) => page.getByRole("textbox", { name: "Title", exact: true });

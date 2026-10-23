@@ -1,0 +1,50 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { browserFixture } from './fixture.ts';
+import { choosePrivateImage, mediaAction } from './media-ui.ts';
+
+for(const width of [390,1600]) test(`media edits presentation, confirms Trash in a dialog and restores using Undo at ${width}px`,async()=>{
+  const f=await browserFixture();
+  try {
+    const button=(name:string)=>f.page.getByRole('button',{name,exact:true});
+    await button('Media').click(); await f.page.setViewportSize({width,height:1000});
+    const panel=await choosePrivateImage(f.page);
+    await panel.getByRole('button',{name:'Add media',exact:true}).click();
+    await panel.locator('[data-image-state="ready"]').waitFor();
+    const [item]=await f.host.session.read((await f.host.session.begin('read-images')).id); assert.ok(item);
+    const [original]=await f.host.session.read((await f.host.session.begin('read-images',item.id)).id); assert.ok(original);
+    await (await mediaAction(f.page,'Edit media')).click();
+    const description=f.page.getByRole('textbox',{name:'Description',exact:true});
+    await description.fill('A private blue image');
+    assert.equal(await panel.locator('input[type="file"]').count(),0);
+    await button('Save changes').click();
+    await description.waitFor({state:'hidden'});
+    await (await mediaAction(f.page,'Move to Trash')).click();
+    const confirmation=f.page.getByRole('dialog').filter({has:f.page.getByRole('button',{name:'Cancel',exact:true})});
+    await confirmation.waitFor();
+    assert.equal(await f.page.getByText('Review · Move to Trash',{exact:true}).count(),0);
+    assert.equal((await f.host.session.read((await f.host.session.begin('read-images')).id)).length,1);
+    await confirmation.getByRole('button',{name:'Cancel',exact:true}).click();
+    await confirmation.waitFor({state:'hidden'});
+    await (await mediaAction(f.page,'Move to Trash')).click(); await confirmation.waitFor();
+    const trashed=f.page.waitForResponse(response=>new URL(response.url()).pathname==='/api/accept');
+    await confirmation.getByRole('button',{name:'Move to Trash',exact:true}).click();
+    assert.equal((await trashed).status(),200);
+    await panel.waitFor({state:'hidden'});
+    await button('Trash').click();
+    await f.page.getByRole('main',{name:'Media Trash',exact:true}).waitFor();
+    await f.page.locator('[data-media-grid-item]').click();
+    await panel.locator('[data-image-state="ready"]').waitFor();
+    const restore=await mediaAction(f.page,'Restore media');
+    assert.equal(await restore.locator('svg.lucide-undo-2,svg[data-icon="restore"]').count()>0,true);
+    const restored=f.page.waitForResponse(response=>new URL(response.url()).pathname==='/api/accept');
+    await restore.click(); assert.equal((await restored).status(),200);
+    await panel.waitFor({state:'hidden'}); await button('Back').click();
+    await f.page.locator('[data-media-grid-item]').click();
+    await panel.locator('[data-image-state="ready"]').waitFor();
+    const [after]=await f.host.session.read((await f.host.session.begin('read-images',original.id)).id);
+    assert.equal(after?.id,original.id); assert.equal(after?.version,4); assert.equal(after?.facts.title,'');
+    assert.equal(after?.facts.description,'A private blue image'); assert.deepEqual(after?.facts.image,original.facts.image);
+    assert.deepEqual(f.errors,[]); await f.screenshot(`media-lifecycle-${width}`);
+  } finally {await f.close();}
+});

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { CreateNote } from "../journeys/createNote.journey.ts";
+import { CreateNote } from "../src/modules/notes/journeys/createNote.journey.ts";
 import { openNotesTestHost } from "./support/notes-host.ts";
 
 test("malformed input fails canonical preparation without a note or receipt", async t => {

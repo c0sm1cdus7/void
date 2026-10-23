@@ -1,198 +1,178 @@
 # Declarative product architecture
 
-Direction recorded on 2026-10-20: one authoritative owner per rule, typed
-references, legible declarations and consistent names. DRY does not mean one
-large file. Generated projections and independent tests are not duplicate rules.
-
-This is the target architecture, not an installed Module API or source migration.
-[Code anatomy](ANATOMY.md) maps the actual files. Missing mechanisms belong in
-DESERT, never in private VOID controllers, renderers or validators.
+Direction recorded on 2026-10-20; source reconciled on 2026-10-22. One
+authoritative owner per rule, typed references, legible declarations and
+consistent names. Generated projections and independent expectations are not
+duplicate product rules. [Code anatomy](ANATOMY.md) maps actual files; this
+document distinguishes installed mechanisms from remaining requirements.
 
 ## Vocabulary and ownership
 
 | Concept | Owns | Does not own |
 | --- | --- | --- |
-| Product | Root composition, mounted modules, entry and navigation choices | A second implementation of its modules |
-| Module | A cohesive capability and explicit public contracts | A server/controller merely because it is a folder |
-| Object and policy | Facts, invariants and authority | Embedded UI or callbacks |
-| Command | A declared change and its canonical input contract | Form layout or an origin-specific activity |
-| Journey | Activity, view bindings, transitions, commands and outcomes | CSS, infrastructure or unchecked handlers |
-| Destination | Navigable identity, parameters and entry journey | A framework page or duplicated initial View binding |
-| View | Ordered catalog composition and typed input/output ports | Journey IDs, permissions, execution or primitive styling |
-| Navigation | Selection, grouping and ordering of destinations | Another destination definition or filesystem discovery |
-| Catalog | Derived index of registered definitions | A parallel handwritten inventory |
+| Product | Mounted modules, root workspace, entry and navigation | A second implementation of each module |
+| Module | A cohesive capability and explicit public contracts | A controller/server merely because it is a folder |
+| Object and policy | Facts, invariants and authority | Embedded rendering or callbacks |
+| Command | Declared change, input and subject requirements | Form layout or an origin-specific activity |
+| Execution journey | Read/mutation intent, dependencies and canonical operation | A private command handler |
+| View journey binding | Typed View outputs, source read, navigation and presentation | CSS, permission or a second implementation of the command |
+| Conditional activity | Bounded steps collecting an installed command's inputs | New commands, arbitrary code or delegated authority |
+| Destination | Navigable identity and entry journey | A framework page or duplicated initial View |
+| View | Ordered catalog values and typed input/output ports | Journey IDs, execution, permissions or primitive styling |
+| Navigation | Selection, grouping and ordering of destinations | Filesystem discovery or another destination definition |
+| Catalog | Derived registered definitions | A handwritten parallel inventory |
 
 Product is the single authored root. Do not add equivalent Application and
-MainModule roots. Application may describe a compiled/running product internally.
-Home is VOID's chosen initial destination, not a mandatory module or SDK-wide
-rule. A module may provide several destinations, several views or none.
+MainModule roots. Home is VOID's selected destination, not an SDK-wide rule.
+A module may provide several destinations, Views or none.
 
-Use **visual surface** for a frame with content and docks, **interaction exposure**
-for offered human/agent journeys, and **channel** for transports such as HTTP/MCP.
-The installed API calls exposure `SurfaceDefinition`; this clarification does
-not rename it. Renderer, distribution and physical deployment are distinct.
+Use **visual surface** for a frame with content/docks, **interaction exposure**
+for offered human/agent execution, and **channel** for transports such as
+HTTP/MCP. The installed API calls exposure `SurfaceDefinition`; renderer,
+distribution and deployment remain distinct.
 
-## Target anatomy
+## Installed anatomy
 
-These paths are proposed; create files only as their contracts are implemented.
+Only implemented capabilities have source folders. The current modules are
+Notes, Tasks, Media, System, Appearance, Identity and Visual catalog. Connections
+and Environments do not have placeholder destinations.
 
 ```text
 src/
-├── void.product.ts
-├── navigation.ts                  Destination references, grouping and order
-├── surfaces.ts                    Human/agent interaction exposure
+├── void.product.ts                 Single composition root
+├── modules.ts                      Derived public reference catalogs
+├── navigation.ts                   Destination groups, purpose and order
+├── surfaces.ts                     Human/agent exposure, not navigation
 ├── views/
-│   └── home.view.ts               Product-level composition
-├── journeys/
-│   └── browseHome.journey.ts      Product-level navigation and collaborations
+│   ├── workspace.view.ts           Optional left dock + destination outlet
+│   ├── navigation.view.ts          Identity + declared navigation
+│   └── home.view.ts                Product-level composition
+├── journeys/browseHome.journey.ts  Root collaboration through public references
 └── modules/
-    ├── index.ts                   Optional re-exports, no new module or runtime
-    ├── identity/
-    │   └── identity.module.ts
-    └── notes/
-        ├── notes.module.ts        Registration and explicit public boundary
-        ├── note.object.ts
-        ├── commands/
-        │   └── createNote.command.ts
-        ├── journeys/
-        │   ├── browseNotes.journey.ts
-        │   └── createNote.journey.ts
-        ├── views/
-        │   ├── notesHome.view.ts
-        │   └── noteEditor.view.ts
-        └── tests/
-            └── … focused acceptance
+    ├── notes/
+    │   ├── notes.module.ts         Registration and explicit public exports
+    │   ├── note.object.ts          Facts and private ownership
+    │   ├── note.publication.ts     Detail View, fields, title and action references
+    │   ├── notes.dependencies.ts   Execution role, not controller implementation
+    │   ├── commands/              Create, edit, Trash and Restore effects
+    │   ├── journeys/              Execution, View bindings and optional Guided note
+    │   └── views/                 Notes, editor, detail, Trash and guided steps/review
+    ├── tasks/                     Private personal tasks with Project labels; no actor assignment
+    ├── media/                     Samples + private import/read/Rename/Trash/Restore
+    ├── system/                    Observed controller status and inventory
+    ├── appearance/                Shared device appearance preferences
+    ├── identity/                  Current identity and session lock
+    └── visualCatalog/             Existing web bank inspection
 ```
 
-Small destination declarations can live in their module manifest, or in the
-Product for Home. Split a `.destination.ts` only when it improves cohesion.
-There is no mandatory view per directory level. Cross-module activities belong
-to the Product or a genuinely cohesive collaboration module.
+Infrastructure, distributions and independent acceptance tests stay outside
+`src/`. The source gate runs before importing declarations. Existing public
+names are not silently renamed; changes to serialized identities and installed
+contracts require explicit evolution. Component placement IDs are generated
+inside DESERT, not authored by product consumers.
 
-Use role-qualified exports: `Note`, `NotesModule`, `CreateNoteCommand`,
-`CreateNoteJourney`, `NotesHomeView`, `NotesHomeDestination`, `VoidProduct`.
-Existing exports/serialized IDs are not silently renamed: contract and data
-migrations must be explicit. IDs are semantic identities, not labels or paths.
-References carry definition kind and compatible contract. A View cannot stand
-in for a Journey. Each registered identity has one definition.
-
-Declarations use `.ts`, not JSX or private components. The withdrawn proposal
-for mandatory `x.views.ts` and `x.journeys.ts` aggregates is not adopted.
+There is no mandatory View per folder level. A cohesive module groups its own
+commands, journeys and Views; root collaborations consume public references.
+The withdrawn mandatory `x.views.ts`/`x.journeys.ts` aggregation is not adopted.
 
 ## Registration and collaboration
 
-1. Each module registers owned definitions once and identifies public contracts
-   by reference. Public authoring exports are not browser-safe data.
-2. The Product mounts selected modules and adds its own compositions.
-3. The compiler derives definition catalogs and the storyboard. The Product
-   authors navigation choices, not a second inventory of views or transitions.
-4. Surface projections expose only permitted information and operations.
+1. A module registers definitions once and selects its public contracts by object
+   reference. Modules never import another module or the root catalog.
+2. `moduleCatalog(...)` derives public Journeys, Views, Commands, Destinations and
+   Dependencies. Commands derive from exported execution journeys.
+3. The Product mounts the catalog and adds its own compositions. Root consumers
+   use issued references such as `Journeys.createNote`, not string lookups.
+4. The compiler derives the wire program, definition inventory and storyboard.
    Registered, exported, exposed, available and authorized are different states.
 
-Modules cannot import another module's implementation, storage or handlers.
-Required public contracts remain explicit even through a bus. The composition
-root binds compatible providers and rejects unresolved needs. Notes works
-without Tasks; attaching a note to a task requires both contracts in that
-collaboration, not hidden coupling in every Notes activity.
+Public `compile(VoidProduct)` consumes the issued composition, not detached wire
+data. The build and controller host derive its admitted View program; an override
+cannot substitute another program or restore standalone navigation. SDK protocol
+tests may compile raw wire fixtures internally without creating a public product path.
 
-The shared runtime owns dispatch. Commands, queries and events retain distinct
-semantics without requiring three buses, a broker or a service per module.
-Internal requests preserve identity and authority, cannot bypass admission or
-acceptance, and do not imply cross-object atomicity.
+Private implementation imports, forged handles and unresolved ownership fail.
+Cross-module data collaboration is not made executable by a reference alone.
+The runtime owns dispatch and preserves trusted identity, admission and atomic
+acceptance. No product controller class, callback service or event broker is
+introduced. A `controllerRole()` describes execution responsibility; the host
+installs the SDK mechanism separately and cannot invent readiness.
 
-The installed `controllerRole()` declares execution responsibility for objects;
-one role can govern several objects. It is not a product-written controller.
-Execution placement remains separate from module organization. Keep existing
-required role declarations until an explicit SDK migration replaces them.
+## Views, rendering and navigation
 
-## Views and navigation
+`defineView()` consumes issued `Components` values, not raw renderer nodes.
+Content is an ordered sequence: Header stands alone, each Stack is titled.
+A View cannot declare CSS, arbitrary markup, render slots or geometry overrides.
+Shared owners supply typography, geometry, pane material, input feedback and
+motion. The catalog's current browser implementation is Svelte/shadcn; native
+catalogs are not installed by declaring native distributions.
 
-Content is an ordered sequence, not a mandatory root Stack. Header stands alone;
-each Stack has a visible title. Catalog owners define geometry, material,
-feedback and motion. Products supply finite semantic properties, never generic
-override bags. A visual catalog indexes the actual registered owners.
+Journeys bind typed View outputs. Canonical command inputs and constraints
+produce the form contract; Views do not redeclare validation. Publications
+associate objects with detail Views, title facts, field representations and
+offered action journeys. Availability and subject eligibility do not replace
+the controller's fresh authority check.
 
-Journeys bind View outputs to admitted actions or navigation. Inputs come from
-authorized projections. Command constraints are derived once, not copied into
-fields and transport validators. A destination references its entry Journey,
-not another independently maintained initial View.
+`workspace.view.ts` declares Navigation in `leftDock` and the active destination
+outlet. Child Views do not duplicate that dock. Navigation owns labels through
+destination metadata and groups/order through the root navigation list. The
+renderer does not infer sidebar entries from filenames or icons.
 
-Navigation occupies the **left dock**. The Notes editor requests the **right
-dock**, falling back to transient when it does not fit. The shared host owns
-fit calculation, occupancy, focus and adaptation; products cannot set private
-breakpoints. The same view instance, draft and run survive reflow.
+Notes requests the right-side shared presentation host, adapting to bottom
+transient presentation on a narrow host. The renderer preserves its instance,
+draft and run through supported reflow. Arbitrary authored right/nested docks
+are still rejected; `preferredDock: "right"` is not a general dock-layout API.
 
-The sidebar is a normal catalog-composed surface: top Toolbar, titled navigation
-Stacks and bottom Toolbar. It receives a navigation projection and emits
-selection; it is not a router. Destination metadata owns labels/icons.
-Detail/editor contexts preserve their navigation ancestor's selection without
-renderer URL heuristics.
-
-Home and Notes start the same CreateNoteJourney. Origin is typed runtime context,
-not another activity definition. Uncertain acceptance reconciles the original
-operation, never a replacement create. MCP/API preserve applicable journey
-semantics without imitating visual docks, Home clicks or lock screens.
+Home and Notes start one creation journey. Lost acceptance replies reconcile
+the original operation. The installed HTTP/MCP execution channels share
+admission and receipts, but a serializable cross-surface View navigator and
+cross-session ordinary-editor continuity are not installed.
 
 ## Identity and entry
 
-Use **Identity**, not User, for the domain. Identity kind, credentials, session,
-role and delegation are separate. Only the administrator creates additional
-identities; bootstrap is a separate one-time installation transition.
-OAuth client registration cannot create a VOID identity.
+Identity, credential, session, administrator role and delegation are separate.
+The normal local host mounts an access boundary before the declared workspace:
+first-admin onboarding, locked sign-in, ready identity or unavailable/checking
+client state. Unknown connectivity never means an uninitialized installation.
 
-The runtime distinguishes checking, setup-required, signed-out, locked,
-authenticated and unavailable. Unknown/error never means setup-required.
-Initial admin creation requires installation-bound proof, atomically consumed.
-Opening the URL first grants nothing. An initialized installation never silently
-reopens setup. Home follows access; authorized resume/deep links may retain
-their destination without restarting the activity.
+First-admin initialization needs the host's one-use bootstrap invitation and an
+atomic installation transition. Lock removes private content/drafts immediately
+and persists a local deny barrier even when server revocation cannot be reached.
+Only explicit authentication lifts that barrier. Server credentials, expiry and
+revocation still govern protected operations; an overlay grants no protection.
 
-Lock denies protected operations and prevents late responses from repainting
-private data; an overlay is insufficient. Recovery restores the same identity.
-Administration/OAuth does not imply access to another identity's private notes.
-Secret inputs cannot enter ordinary persisted drafts, logs or catalog examples.
-
-Recovery proof, admin transfer/loss, agent identity versus human delegation,
-lock scope and draft retention remain decisions to close before enabling them.
-Authentication recovery does not imply recovery of lost encryption keys.
-Minimum access security precedes a protected release; this does not move the
-entire Identity vertical ahead of Notes.
+The Identity View publishes current public identity data and lock, not an
+administration console. Backend administrator-only create/list/disable methods
+exist, but are not product actions or exposed as bypass endpoints. Canonical
+identity-administration journeys, password recovery, agent OAuth, admin transfer,
+delegation and encryption-key recovery remain unfinished. Administrator status
+never implies access to another identity's private Notes or images.
 
 ## Enforcement and evidence
 
-Canonical schemas supply authoring types and runtime shape validation; canonical
-semantic checks resolve references, bindings and authority requirements.
-A TypeScript cast or policy label cannot grant safety. Independent tests must
-not derive expected outcomes from the interpreter under test.
-
-| Required gate | Current evidence |
+| Required boundary | Current implementation / remaining qualification |
 | --- | --- |
-| Reject unknown View properties, callbacks, styling and schema mutation | Installed for literal N1a |
-| Reject duplicate/missing View references and unbounded composition | Installed for literal N1a |
-| Enforce ordered content, independent Header and titled Stacks | Installed for literal N1a |
-| Deny unexposed journeys and unauthorized Notes reads/writes | Existing finite local runtime |
-| Preserve one effect/receipt through acceptance retries | Existing Notes N0 proof |
-| Reject private module imports, import-time effects and product infrastructure | Missing module/build boundary |
-| Reject incompatible port payloads and unbound required outputs | Missing View/journey binding |
-| Derive catalogs/storyboard and reject renderer-owned navigation | Missing general composition contract |
-| Reject consumer CSS/AST escape hatches throughout the renderer | Ownership audit remains open |
-| Preserve editor/run/draft through right dock and transient adaptation | Missing new-View host qualification |
-| Deny bootstrap takeover, replay and concurrent second admin creation | Missing access runtime |
-| Deny OAuth/login identity creation, recovery escalation and locked access | Missing identity lifecycle |
-| Preserve admission and operation identity through module dispatch | Missing general integration protocol |
+| Issued component values, finite props, no raw View clones | Component builders, `defineView`, module/root admission and negative source/type tests |
+| One navigation/source/field/review owner | Composition guards and explicit source-read bindings; no first-read inference |
+| Product infrastructure or private-module imports | Source gate before build/host/inspection evaluation |
+| Unauthorized reads/writes and stale versions | Canonical session admission, preparation and atomic acceptance |
+| One effect/receipt across retries | Runtime tests for Notes, Tasks and private images |
+| Responsive shared geometry and motion | Built browser evidence is tied to a specific artifact, not inferred from contracts |
+| Bootstrap/lock/revocation | Real local identity, HTTP and browser tests; no recovery/OAuth claim |
+| Conditional activities | Durable bounded kernel, human step interpreter and declared Guided note; exact browser qualification is separate |
+| Whole renderer ownership | Finite active-owner boundaries are enforced; separately inventoried legacy debt is not erased by a zero-new-debt result |
 
-[Verification](VERIFICATION.md) records existing evidence, not success for planned
-gates. Source restrictions require build checks; runtime boundaries remain
-mandatory. Trusted TypeScript authoring is not a malicious-module sandbox.
+Tests, source inspection, generated builds and human visual approval are
+different evidence. [Verification](VERIFICATION.md) and the
+[delivery record](OVERNIGHT-2026-10-22.md) identify actual results. Trusted
+TypeScript authoring is not a sandbox for malicious code.
 
-## Next proof
+## Still outside the installed product
 
-Close the minimal schemas, references and bindings with independent positive and
-negative fixtures. Connect one Product, NotesModule, Home/Notes destinations and
-one reusable create activity to the SDK-owned renderer. Fixture previews stay
-explicitly distinct from real authorized data. Qualify right-dock/transient
-behavior and the actual catalog owners.
-
-Access needs its own bootstrap/authentication/recovery proof before a protected
-release. Preserve the stable build, stores and IDs. Do not leave the new binding
-and a legacy implementation as two permanent authorities.
+Collaborative Notes, external provisioning, remote environment
+enrollment, task-to-actor execution/conversations and native parity are not
+completed by this module architecture. Conditional activities reuse one
+installed mutation; they do not install cross-identity assignment or
+cross-object atomic workflows. Private image import is not a managed private
+audio/video library. Preserve those requirements in the [roadmap](ROADMAP.md),
+without fabricating tabs, providers or permissions to make it appear complete.

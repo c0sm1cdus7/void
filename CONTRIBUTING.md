@@ -26,9 +26,16 @@ Use a branch and a pull request. `main` is the planned release boundary across
 iOS, Android, Linux and Web, not a scratch branch. SDK fixes belong in DESERT;
 product-specific workarounds for missing SDK behavior do not belong in VOID.
 
+Each capability lives in `src/modules/<capability>/` and publishes an explicit
+`*.module.ts` manifest. The root mounts manifests, not their internals. Catalogs
+and the storyboard are derived by DESERT; never add a second hand-maintained
+inventory. Product-level Home/collaborations live outside capability modules.
+
 Views use `*.view.ts`; journeys use `*.journey.ts`. Product declarations must not
 contain HTML, CSS, custom components, render callbacks or controller code. Closed
 SDK catalogs own presentation. Runtime authority remains with the shared executor.
+`npm run check` includes the SDK source boundary; build, host and inspection
+also run it before evaluating declarations. Keep tests/infrastructure outside `src/`.
 
 ## Evidence and review
 

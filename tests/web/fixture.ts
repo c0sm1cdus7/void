@@ -6,10 +6,12 @@ import { chromium, type Page } from "playwright";
 import { compile } from "desert-sdk/src/index.ts";
 import { openDeveloperHost } from "desert-sdk/src/local/developer-host.ts";
 import { serveBuiltLocalSurface } from "desert-sdk/src/build/serve.ts";
-import { VOID } from "../../product.ts";
-import { NotesController } from "../../dependencies.ts";
-import { HumanNotes } from "../../surfaces.ts";
-import { ReadNotes } from "../../journeys/readNotes.journey.ts";
+import { VoidViewProgram, VoidProduct } from "../../src/void.product.ts";
+import { Dependencies } from "../../src/modules.ts";
+import { VoidHumanSurface } from "../../src/surfaces.ts";
+import { ReadNotes } from "../../src/modules/notes/journeys/browseNotes.journey.ts";
+import { localMedia } from "../../scripts/local-media.ts";
+import { privateImages } from "../../scripts/private-images.ts";
 
 type Operation = { operation: "begin" | "prepare" | "accept"; input: Record<string, unknown> };
 
@@ -21,8 +23,10 @@ export async function settleMotion(page: Page) {
   });
 }
 
-export async function browserFixture() {
+export async function browserFixture(options: { hasTouch?: boolean } = {}) {
   if (!process.env.VOID_WEB_BUILD) throw new Error("VOID_WEB_BUILD_REQUIRED: supply the real VOID web build directory");
+  const uiTimeout = process.env.VOID_WEB_UI_TIMEOUT_MS === undefined ? 10000 : Number(process.env.VOID_WEB_UI_TIMEOUT_MS);
+  if (!Number.isFinite(uiTimeout) || uiTimeout <= 0) throw new Error("VOID_WEB_UI_TIMEOUT_MS_MUST_BE_POSITIVE_FINITE");
   const directory = mkdtempSync(join(tmpdir(), "void-browser-"));
   const cleanup: (() => void | Promise<void>)[] = [() => rmSync(directory, { recursive: true, force: true })];
   async function close() {
@@ -33,17 +37,18 @@ export async function browserFixture() {
     if (failures.length) throw new AggregateError(failures, "VOID_BROWSER_CLEANUP_FAILED");
   }
   try {
-    const host = await openDeveloperHost({ application: compile(VOID), role: NotesController.id,
-      surfaceId: HumanNotes.id, directory });
+    const host = await openDeveloperHost({ application: compile(VoidProduct), roles: [Dependencies.notes.id, Dependencies.tasks.id, Dependencies.media.id],
+      surfaceId: VoidHumanSurface.id, directory, privateImages: privateImages(directory) });
     cleanup.push(() => host.close());
     const server = await serveBuiltLocalSurface({ session: host.session,
-      buildDirectory: resolve(process.env.VOID_WEB_BUILD), port: 0 });
+      buildDirectory: resolve(process.env.VOID_WEB_BUILD), port: 0, ...localMedia(VoidViewProgram) });
     cleanup.push(() => server.close());
     const browser = await chromium.launch({ headless: true });
     cleanup.push(() => browser.close());
-    const context = await browser.newContext({ viewport: { width: 1600, height: 1000 }, colorScheme: "dark" });
+    const context = await browser.newContext({ viewport: { width: 1600, height: 1000 }, colorScheme: "dark",
+      hasTouch: options.hasTouch ?? false });
     const page = await context.newPage();
-    page.setDefaultTimeout(10000);
+    page.setDefaultTimeout(uiTimeout);
     const errors: string[] = [];
     const operations: Operation[] = [];
     page.on("pageerror", error => errors.push(error.message));
@@ -57,7 +62,7 @@ export async function browserFixture() {
       }
     });
     await page.goto(server.launchUrl);
-    await page.getByRole("main", { name: "Home", exact: true }).waitFor();
+    await page.locator('[role="main"][data-destination="home"]').waitFor();
     async function records() {
       const list = await host.session.read((await host.session.begin(ReadNotes.id)).id);
       return Promise.all(list.map(async record =>

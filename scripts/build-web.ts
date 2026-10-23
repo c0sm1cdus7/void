@@ -2,13 +2,16 @@ import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
 import { compile } from "desert-sdk/src/index.ts";
 import { buildDistribution } from "desert-sdk/src/build/index.ts";
-import { VOID } from "../product.ts";
-import { VoidService, VoidWeb } from "../distributions.ts";
-import { VoidViewProgram } from "../experience.ts";
+import { assertProductSource } from "desert-sdk/src/authoring/index.ts";
 
-const manifest = await buildDistribution(compile(VOID), {
+await assertProductSource(fileURLToPath(new URL("../src", import.meta.url)));
+const { VoidViewProgram, VoidProduct } = await import("../src/void.product.ts");
+const { VoidService, VoidWeb } = await import("../distributions.ts");
+const { localMedia } = await import("./local-media.ts");
+
+const manifest = await buildDistribution(compile(VoidProduct), {
   distributions: [VoidService, VoidWeb], target: VoidWeb.id,
-  viewProgram: VoidViewProgram,
+  ...localMedia(VoidViewProgram),
   outputDirectory: process.argv[2] ? resolve(process.argv[2]) : fileURLToPath(new URL("../build/void-web", import.meta.url)),
 });
 console.log(JSON.stringify({ status: manifest.status, distribution: manifest.distributionId,

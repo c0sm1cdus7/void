@@ -2,7 +2,7 @@
   "name": "@c0sm1cdus7/void",
   "version": "0.0.0-n0",
   "private": true,
-  "description": "VOID Notes N0: declarative DESERT product and isolated local runtime proof.",
+  "description": "VOID: capability modules and a preserved DESERT Notes web experience.",
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -11,10 +11,12 @@
   "scripts": {
     "web:build": "node scripts/build-web.ts",
     "dev": "node scripts/run-local.ts",
+    "source:check": "node scripts/check-source.ts",
+    "inspect": "node scripts/inspect.ts",
     "typecheck": "tsc --noEmit",
     "test": "node --test --test-concurrency=1 --test-timeout=30000 tests/*.test.ts",
     "test:web": "node --test --test-concurrency=1 --test-timeout=45000 tests/web/*.test.ts",
-    "check": "npm run typecheck && npm test"
+    "check": "npm run source:check && npm run typecheck && npm test"
   },
   "dependencies": {
     "desert-sdk": "file:../desert"

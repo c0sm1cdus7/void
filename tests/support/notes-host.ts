@@ -3,13 +3,13 @@ import { compile } from "desert-sdk/src/index.ts";
 import { openLocalController } from "desert-sdk/src/local.ts";
 import type { Receipt, StoredObject } from "desert-sdk/src/local/types.ts";
 import { postgresCluster } from "desert-sdk/src/testing/postgres-cluster.ts";
-import { NotesController } from "../../dependencies.ts";
-import { VOID } from "../../product.ts";
+import { NotesController } from "../../src/modules/notes/notes.dependencies.ts";
+import { VOID, VoidProduct } from "../../src/void.product.ts";
 
 // Test-only host: the SDK creates and removes its own temporary cluster.
 // No existing database, product store or privileged runtime is exposed to VOID.
 export async function openNotesTestHost() {
-  const application = compile(VOID);
+  const application = compile(VoidProduct);
   const cluster = postgresCluster();
   let controller: Awaited<ReturnType<typeof openLocalController>> | undefined;
   let observer: Pool | undefined;
@@ -23,7 +23,7 @@ export async function openNotesTestHost() {
   try {
     const database = await cluster.database();
     async function connect() {
-      controller = await openLocalController(application, { ...database, role: NotesController.id });
+      controller = await openLocalController(application, { ...database, roles: [NotesController.id] });
       observer = new Pool({ host: database.socketDirectory, database: database.database, user: database.user });
       observer.on("error", () => {});
     }

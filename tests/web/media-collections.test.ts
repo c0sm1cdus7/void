@@ -1,0 +1,88 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {browserFixture,settleMotion} from './fixture.ts';
+import {choosePrivateImage} from './media-ui.ts';
+import {Journeys} from '../../src/modules.ts';
+
+for(const width of [390,1600])test(`collections are created through the media selector and edited within their main page at ${width}px`,async()=>{
+  const f=await browserFixture();
+  const failedMedia:string[]=[];
+  try{
+    f.page.on('response',response=>{if(response.url().includes('/api/private-images/')&&response.status()>=400)void response.text().then(body=>failedMedia.push(`${response.status()} ${response.url()} ${body}`));});
+    const button=(name:string)=>f.page.getByRole('button',{name,exact:true});
+    await button('Media').click();await f.page.setViewportSize({width,height:1100});
+    const panel=await choosePrivateImage(f.page);
+    await panel.getByRole('button',{name:'Collections',exact:true}).click();
+    await button('Create collection').click();
+    await f.page.getByRole('textbox',{name:'Name',exact:true}).fill('Japan');
+    await button('Create collection').click();
+    await f.page.getByRole('textbox',{name:'Name',exact:true}).waitFor({state:'hidden'});
+    await f.page.keyboard.press('Escape');
+    await panel.getByRole('button',{name:'Add media',exact:true}).click();
+    await panel.locator('[data-media-object]').waitFor();
+    await panel.getByRole('button',{name:'Close',exact:true}).first().click();
+    await panel.waitFor({state:'hidden'});await settleMotion(f.page);
+    const libraryFlow=f.page.locator('[data-content-layout="gallery"]').filter({visible:true});
+    await libraryFlow.waitFor();
+    if(width===1600)assert.ok((await libraryFlow.boundingBox())!.width>800,'Media uses the gallery measure, not the 34rem reading column');
+    else assert.equal(await libraryFlow.evaluate(element=>element.scrollWidth<=element.clientWidth+1),true,'narrow library has no horizontal overflow');
+    const card=button('Open collection Japan');await card.waitFor();
+    assert.match(await card.innerText(),/1 item/);
+    await card.click();
+    await f.page.getByRole('heading',{name:'Japan',exact:true}).waitFor();
+    await settleMotion(f.page);
+    assert.equal(await f.page.locator('[data-adaptive-surface]').count(),0);
+    const collectionFlow=f.page.locator('[data-content-layout="gallery"]').filter({visible:true});
+    if(width===1600)assert.ok((await collectionFlow.boundingBox())!.width>800,'a collection uses the same gallery measure');
+    else assert.equal(await collectionFlow.evaluate(element=>element.scrollWidth<=element.clientWidth+1),true,'narrow collection has no horizontal overflow');
+    assert.equal(await f.page.locator('[data-media-grid-item]').filter({visible:true}).count(),1);
+    async function editCollection(){
+      await settleMotion(f.page);
+      if(!await button('Edit collection').isVisible())await button('More actions').filter({visible:true}).click();
+      await button('Edit collection').filter({visible:true}).click();
+      await panel.waitFor();assert.equal(await panel.getAttribute('data-presentation'),'transient');
+    }
+    await editCollection();
+    await f.page.getByRole('textbox',{name:'Collection name',exact:true}).fill('Japan 2026');
+    await panel.getByRole('button',{name:/^Presentation/}).click();
+    await f.page.getByRole('option',{name:'List',exact:true}).click();
+    await panel.getByRole('button',{name:'Cover',exact:true}).click();
+    await button('Cover image 1').click();
+    await panel.getByRole('button',{name:'Save collection',exact:true}).click();
+    await panel.waitFor({state:'hidden'});
+    await f.page.getByRole('heading',{name:'Japan 2026',exact:true}).waitFor();
+    assert.equal(await f.page.locator('[data-media-layout="list"]').filter({visible:true}).count(),1);
+    await f.screenshot(`media-collection-list-${width}`);
+    const [collection]=await f.host.session.read((await f.host.session.begin(Journeys.readCollections.id)).id);assert.ok(collection);
+    const [media]=await f.host.session.read((await f.host.session.begin(Journeys.readImages.id)).id);assert.ok(media);
+    const details=await f.host.session.read((await f.host.session.begin(Journeys.readCollections.id,collection.id)).id);
+    assert.deepEqual(details[0]?.facts,{title:'Japan 2026',layout:'list',cover:[media.id]});
+    await editCollection();
+    const coverThumbnail=panel.locator('[data-media-reference-thumbnail] img');
+    await coverThumbnail.waitFor().catch(error=>{throw new Error(`${String(error)}\n${failedMedia.join('\n')}`);});
+    assert.equal(await coverThumbnail.evaluate(image=>image instanceof HTMLImageElement&&image.complete&&image.naturalWidth>0),true,failedMedia.join('\n'));
+    await f.screenshot(`media-collection-editor-${width}`);
+    const membership=panel.getByRole('checkbox');await membership.waitFor();assert.equal(await membership.isChecked(),true);
+    await membership.uncheck();await settleMotion(f.page);
+    assert.match(await panel.getByRole('button',{name:'Cover',exact:true}).innerText(),/Automatic/);
+    await panel.getByRole('button',{name:'Close',exact:true}).first().click();await panel.waitFor({state:'hidden'});
+    const [cancelledCollection]=await f.host.session.read((await f.host.session.begin(Journeys.readCollections.id,collection.id)).id);
+    const [cancelledMedia]=await f.host.session.read((await f.host.session.begin(Journeys.readImages.id,media.id)).id);
+    assert.deepEqual(cancelledCollection,details[0],'Cancel keeps the saved cover and version');
+    assert.deepEqual(cancelledMedia?.facts.collections,[collection.id],'Cancel keeps the saved membership');
+    assert.equal(cancelledMedia?.version,media.version);
+    await editCollection();assert.equal(await membership.isChecked(),true);
+    await membership.uncheck();await settleMotion(f.page);
+    await panel.getByRole('button',{name:'Save collection',exact:true}).click();await panel.waitFor({state:'hidden'});
+    assert.equal(await f.page.locator('[data-media-grid-item]').filter({visible:true}).count(),0);
+    const [after]=await f.host.session.read((await f.host.session.begin(Journeys.readImages.id,media.id)).id);
+    assert.deepEqual(after?.facts.collections,[]);assert.equal(after?.facts.title,'');
+    const [savedCollection]=await f.host.session.read((await f.host.session.begin(Journeys.readCollections.id,collection.id)).id);
+    assert.deepEqual(savedCollection?.facts.cover,[],'removing the chosen image falls back to automatic cover');
+    assert.deepEqual(f.errors,[]);await f.screenshot(`media-collection-${width}`);
+  }catch(error){
+    await f.screenshot(`media-collection-failure-${width}`);
+    const dialogs=await f.page.getByRole('dialog').filter({visible:true}).allInnerTexts();
+    throw new Error(`${String(error)}\nVisible dialogs: ${JSON.stringify(dialogs)}\nMedia responses: ${failedMedia.join('\n')}\nPage errors: ${f.errors.join('\n')}`,{cause:error});
+  }finally{await f.close();}
+});

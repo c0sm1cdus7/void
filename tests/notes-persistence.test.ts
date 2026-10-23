@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { CreateNote } from "../journeys/createNote.journey.ts";
-import { ReadNotes } from "../journeys/readNotes.journey.ts";
+import { CreateNote } from "../src/modules/notes/journeys/createNote.journey.ts";
+import { ReadNotes } from "../src/modules/notes/journeys/browseNotes.journey.ts";
 import { openNotesTestHost } from "./support/notes-host.ts";
 
 test("an untitled note is written only on acceptance and projected without its owner", async t => {
@@ -18,7 +18,7 @@ test("an untitled note is written only on acceptance and projected without its o
   assert.equal(snapshot.objects.length, 1);
   assert.deepEqual(snapshot.objects[0], {
     id: receipt.object.id, object_type: "note", version: 1,
-    facts: { title: "", body, owner: identity.id },
+    facts: { title: "", body, owner: identity.id, state: "active" },
   });
   assert.deepEqual(snapshot.receipts, [receipt]);
   const list = await session.read((await session.begin(ReadNotes.id)).id);
