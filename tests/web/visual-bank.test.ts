@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { InteractionCatalog } from "desert-sdk/src/interaction/catalog.ts";
-import { sharedIndexOwners } from "desert-sdk/src/svelte/catalog/shared-purpose.ts";
+import { sharedIndexOwners } from "desert-sdk/src/svelte/infra/shared-purpose.ts";
 import { browserFixture, settleMotion } from "./fixture.ts";
 
 test("built Visual bank publishes its index, real grouped facts and responsive state inspection without product mutations", async () => {
