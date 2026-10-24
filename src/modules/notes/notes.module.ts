@@ -17,23 +17,24 @@ import { GuidedNote, GuidedNoteJourney } from "./journeys/guidedNote.journey.ts"
 import { NoteTitleView } from "./views/noteTitle.view.ts";
 import { NoteBodyView } from "./views/noteBody.view.ts";
 import { NoteReviewView } from "./views/noteReview.view.ts";
+import { m } from "../../messages/keys.ts";
 
 const NotesDestination = {
-  id: "notes", label: "Notes", icon: "create", entryJourney: ReadNotes,
+  id: "notes", label: m.notes.destination, icon: "create", entryJourney: ReadNotes,
 } as const;
-const TrashDestination = { id: "notes-trash", label: "Trash", icon: "archive", entryJourney: ReadTrash } as const;
+const TrashDestination = { id: "notes-trash", label: m.notes.trashDestination, icon: "archive", entryJourney: ReadTrash } as const;
 
 export const NotesModule = defineModule({
   id: "notes",
   objects: [PublishedNote], dependencies: [NotesController], policies: [PrivateNotes],
   journeys: [
-    { execution: CreateNote, presentation: CreateNoteJourney, label: "Create note", humanReview: "not-required" },
-    { execution: ReadNotes, presentation: ReadNotesJourney, label: "Notes" },
-    { execution: EditNote, presentation: EditNoteJourney, label: "Edit note", humanReview: "not-required" },
-    { execution: ReadTrash, presentation: ReadTrashJourney, label: "Trash" },
-    { execution: TrashNote, presentation: TrashNoteJourney, label: "Move to Trash", humanReview: "confirmation" },
-    { execution: RestoreNote, presentation: RestoreNoteJourney, label: "Restore note", humanReview: "not-required" },
-    { execution: GuidedNote, presentation: GuidedNoteJourney, label: "Guided note", humanReview: "required" },
+    { execution: CreateNote, presentation: CreateNoteJourney, label: m.notes.createNote, humanReview: "not-required" },
+    { execution: ReadNotes, presentation: ReadNotesJourney, label: m.notes.readNotes },
+    { execution: EditNote, presentation: EditNoteJourney, label: m.notes.editNote, humanReview: "not-required" },
+    { execution: ReadTrash, presentation: ReadTrashJourney, label: m.notes.readTrash },
+    { execution: TrashNote, presentation: TrashNoteJourney, label: m.notes.trashNote, humanReview: "confirmation" },
+    { execution: RestoreNote, presentation: RestoreNoteJourney, label: m.notes.restoreNote, humanReview: "not-required" },
+    { execution: GuidedNote, presentation: GuidedNoteJourney, label: m.notes.guidedNote, humanReview: "required" },
   ],
   views: [NotesView, NoteEditorView, NoteDetailView, TrashView, NoteTitleView, NoteBodyView, NoteReviewView],
   destinations: [NotesDestination, TrashDestination],

@@ -5,6 +5,7 @@ import { MediaModule } from "../src/modules/media/media.module.ts";
 import { ImagesView } from "../src/modules/media/views/images.view.ts";
 import { ImportImageRecord } from "../src/modules/media/commands/importImage.command.ts";
 import { VoidProduct } from "../src/void.product.ts";
+import { Messages, m } from "../src/messages/keys.ts";
 
 test("Media has one canonical private library, never a separate sample gallery destination", () => {
   const destination = VoidProduct.viewProgram.destinations.find(item => item.id === "media")!;
@@ -12,8 +13,10 @@ test("Media has one canonical private library, never a separate sample gallery d
   assert.equal(VoidProduct.viewProgram.destinations.some(item => item.id === "private-images"), false);
   assert.equal(VoidProduct.viewProgram.journeys.some(item => item.id === "browse-media"), false);
   assert.equal(VoidProduct.viewProgram.views.some(item => item.content.some(content => content.kind === "media-library")), false);
-  assert.equal(ImagesView.content[0]?.kind === "header" && ImagesView.content[0].title, "Media");
-  const stack = ImagesView.content.find(item => item.kind === "stack" && item.title === "Media")!;
+  const header = ImagesView.content[0];
+  assert.deepEqual(header?.kind === "header" && header.title, m.media.images.title);
+  assert.equal(Messages.bundle("en").text(m.media.images.title), "Media");
+  const stack = ImagesView.content.find(item => item.kind === "stack" && item.title.key === m.media.images.all.key)!;
   assert.equal(stack.kind === "stack" && stack.items[0]?.kind === "collection" && stack.items[0].presentation?.kind, "media-grid");
 });
 

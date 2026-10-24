@@ -7,6 +7,8 @@ import { Commands, Journeys, Modules, Views } from "../src/modules.ts";
 import { VoidProduct } from "../src/void.product.ts";
 import { WorkspaceView } from "../src/views/workspace.view.ts";
 import { NavigationView } from "../src/views/navigation.view.ts";
+import { m } from "../src/messages/keys.ts";
+import { WitnessMessages, witness } from "./support/messages.ts";
 
 test("one composition derives the exact current capability and visual inventories", () => {
   assert.deepEqual(VoidProduct.catalog.modules, ["notes", "tasks", "media", "system", "appearance", "identity", "visual-catalog"]);
@@ -86,22 +88,22 @@ test("Notes mounts without Home or Visual catalog when its host provides a real 
   const modules = moduleIndex([NotesModule]);
   const journeys = Object.values(modules.journeys);
   const base = {
-    id: "void", label: "VOID", modules,
+    id: "void", label: m.void.label, messages: WitnessMessages, modules,
     views: [WorkspaceView, NavigationView] as const, workspace: WorkspaceView,
     exposures: [humanExposure({ id: "human", journeys, locale: "en" }), agentExposure("agent", journeys)],
     entry: modules.destinations.Notes,
-    navigation: [{ destination: modules.destinations.Notes, group: "Explore", purpose: "content" }] as const,
+    navigation: [{ destination: modules.destinations.Notes, group: m.void.explore, purpose: "content" }] as const,
   };
   assert.throws(() => composeProduct(base), /UNREACHABLE_PROGRAM_JOURNEY/,
     "An exposed guided activity cannot be stranded after removing its obsolete creation shortcut");
   const ResumeView = defineView({ name: "resume-notes", outputs: [], content: [
-    Components.Header({ title: "Needs your attention" }), Components.Attention(),
+    Components.Header({ title: witness.attention }), Components.Attention(),
   ] });
   const ResumeJourney = { id: "resume-notes", kind: "presentation", view: ResumeView, outputs: [] } satisfies ViewJourney;
-  const ResumeDestination = { id: "resume-notes", label: "Needs your attention", icon: "open", entryJourney: ResumeJourney } satisfies ViewDestination;
+  const ResumeDestination = { id: "resume-notes", label: witness.attention, icon: "open", entryJourney: ResumeJourney } satisfies ViewDestination;
   const notes = composeProduct({ ...base, views: [...base.views, ResumeView] as const,
     journeys: [{ presentation: ResumeJourney }], destinations: [ResumeDestination],
-    navigation: [...base.navigation, { destination: ResumeDestination, group: "Explore", purpose: "content" }] as const,
+    navigation: [...base.navigation, { destination: ResumeDestination, group: m.void.explore, purpose: "content" }] as const,
   });
   assert.deepEqual(notes.viewProgram.destinations.map(item => item.id), ["notes", "notes-trash", "resume-notes"]);
   assert.equal(notes.viewProgram.views.some(view => view.id === "home" || view.id === "visual-catalog"), false);

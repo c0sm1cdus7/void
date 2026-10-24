@@ -1,4 +1,5 @@
 import { Components, defineView, viewPorts } from "desert-sdk/src/index.ts";
+import { m } from "../../../messages/keys.ts";
 
 const Ports = viewPorts({ inputs: { notes: "collection" }, outputs: ["create", "select", "trash"] });
 
@@ -7,15 +8,15 @@ export const NotesView = defineView({
   name: "notes",
   outputs: Ports.outputs,
   topDock: Components.Toolbar({ actions: [
-    { output: Ports.output.create, label: "Create note", icon: "create" },
+    { output: Ports.output.create, label: m.notes.createNote, icon: "create" },
   ] }),
   content: [
-    Components.Header({ title: "Notes", subtitle: "Your private notes." }),
-    Components.Stack({ title: "All notes", items: [
+    Components.Header({ title: m.notes.title, subtitle: m.notes.subtitle }),
+    Components.Stack({ title: m.notes.all, items: [
       Components.Collection({ input: Ports.inputs.notes, output: Ports.output.select }),
     ] }),
-    Components.Stack({ title: "Manage notes", items: [
-      Components.DestinationLink({ output: Ports.output.trash, label: "Trash", icon: "archive" }),
+    Components.Stack({ title: m.notes.manage, items: [
+      Components.DestinationLink({ output: Ports.output.trash, label: m.notes.trashLink, icon: "archive" }),
     ] }),
   ],
 });

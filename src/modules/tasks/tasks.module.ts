@@ -17,19 +17,20 @@ import { ReopenTask, ReopenTaskJourney } from "./journeys/reopenTask.journey.ts"
 import { TasksView } from "./views/tasksHome.view.ts";
 import { TaskEditorView } from "./views/taskEditor.view.ts";
 import { TaskDetailView } from "./views/taskDetail.view.ts";
+import { m } from "../../messages/keys.ts";
 
-const TasksDestination = { id: "tasks", label: "Tasks", icon: "confirm", entryJourney: ReadTasks } as const;
+const TasksDestination = { id: "tasks", label: m.tasks.destination, icon: "confirm", entryJourney: ReadTasks } as const;
 
 export const TasksModule = defineModule({
   id: "tasks", objects: [PublishedTask, PublishedProject], dependencies: [TasksController], policies: [PrivateTasks, PrivateProjects],
   journeys: [
-    { execution:ReadProjects, presentation:ReadProjectsJourney, label:'Projects' },
-    { execution:CreateProject, presentation:CreateProjectJourney, label:'Create project', humanReview:'not-required' },
-    { execution: CreateTask, presentation: CreateTaskJourney, label: "Create task", humanReview: "not-required" },
-    { execution: ReadTasks, presentation: ReadTasksJourney, label: "Tasks" },
-    { execution: EditTask, presentation: EditTaskJourney, label: "Edit task", humanReview: "not-required" },
-    { execution: CompleteTask, presentation: CompleteTaskJourney, label: "Complete task", humanReview: "not-required" },
-    { execution: ReopenTask, presentation: ReopenTaskJourney, label: "Reopen task", humanReview: "not-required" },
+    { execution:ReadProjects, presentation:ReadProjectsJourney, label:m.tasks.readProjects },
+    { execution:CreateProject, presentation:CreateProjectJourney, label:m.tasks.createProject, humanReview:'not-required' },
+    { execution: CreateTask, presentation: CreateTaskJourney, label: m.tasks.createTask, humanReview: "not-required" },
+    { execution: ReadTasks, presentation: ReadTasksJourney, label: m.tasks.readTasks },
+    { execution: EditTask, presentation: EditTaskJourney, label: m.tasks.editTask, humanReview: "not-required" },
+    { execution: CompleteTask, presentation: CompleteTaskJourney, label: m.tasks.completeTask, humanReview: "not-required" },
+    { execution: ReopenTask, presentation: ReopenTaskJourney, label: m.tasks.reopenTask, humanReview: "not-required" },
   ],
   views: [TasksView, TaskEditorView, TaskDetailView, ProjectDetailView, ProjectsView, ProjectEditorView], destinations: [TasksDestination],
   exports: {
