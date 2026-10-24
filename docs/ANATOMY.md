@@ -308,20 +308,20 @@ host. The same approved primitive owners, geometry, toolbar, search and motion
 remain in DESERT. No visual implementation moved into VOID.
 
 The actual rendering route starts at SDK
-[ViewProduct](../../desert/src/svelte/views/ViewProduct.svelte), not a VOID page
+[ViewProduct](../../desert/src/svelte/catalog/renderer/view-product/ViewProduct.svelte), not a VOID page
 component. It passes the model snapshot through the
-[bounded gateway](../../desert/src/svelte/adapter-catalog.ts) to
-[ViewWorkspace](../../desert/src/svelte/pieces/ViewWorkspace.svelte), which
+[generated catalog index](../../desert/src/svelte/catalog/index.ts) to
+[ViewWorkspace](../../desert/src/svelte/catalog/compositions/view-workspace/ViewWorkspace.svelte), which
 resolves the declared root through the SDK's
 [workspace resolver](../../desert/src/views/program-workspace.ts), then composes
 the existing shell, declared navigation, search overlay and retained content.
 
 | VOID declaration | Shared catalog composition |
 | --- | --- |
-| [Notes home](../src/modules/notes/views/notesHome.view.ts) | Ordered [ContentFlow](../../desert/src/svelte/pieces/ContentFlow.svelte): standalone Header, titled Stack and bound collection. |
+| [Notes home](../src/modules/notes/views/notesHome.view.ts) | Ordered [ContentFlow](../../desert/src/svelte/catalog/compositions/content-flow/ContentFlow.svelte): standalone Header, titled Stack and bound collection. |
 | [Note detail](../src/modules/notes/views/noteDetail.view.ts) and [editor](../src/modules/notes/views/noteEditor.view.ts) | Resolved Panel → existing Drawer → SurfaceFrame. Titles and available actions are resolved before rendering. |
-| [Visual catalog](../src/modules/visualCatalog/views/visualCatalog.view.ts) | Inspection adapter → [Inspection](../../desert/src/svelte/pieces/Inspection.svelte) → [InspectionCatalog](../../desert/src/svelte/catalog/InspectionCatalog.svelte), using the actual web bank and local specimens. |
-| [Media](../src/modules/media/views/media.view.ts) | Media adapter → [MediaLibrary](../../desert/src/svelte/pieces/media/Library.svelte) → existing catalog hero/cards and shared Viewer. |
+| [Visual catalog](../src/modules/visualCatalog/views/visualCatalog.view.ts) | Inspection adapter → [Inspection](../../desert/src/svelte/catalog/compositions/inspection/Inspection.svelte) → [InspectionCatalog](../../desert/src/svelte/catalog/compositions/inspection-catalog/InspectionCatalog.svelte), using the actual web bank and local specimens. |
+| [Media](../src/modules/media/views/media.view.ts) | Media adapter → [MediaLibrary](../../desert/src/svelte/catalog/compositions/library/Library.svelte) → existing catalog hero/cards and shared Viewer. |
 
 These are bounded SDK owners, not product overrides or replacement screens.
 Render adapters select them using typed props; owners implement the DOM,
