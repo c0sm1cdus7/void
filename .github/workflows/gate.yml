@@ -18,14 +18,14 @@ jobs:
         with: { path: void, fetch-depth: 0 }
       - name: DESERT branch (same name, else codex/module-architecture)
         id: desert
-        env: { BRANCH: "${{ github.head_ref || github.ref_name }}", GH_TOKEN: "${{ secrets.DESERT_READ_TOKEN }}" }
+        env: { BRANCH: "${{ github.head_ref || github.ref_name }}", GH_TOKEN: "${{ github.token }}" }
         run: |
           if gh api "repos/c0sm1cdus7/desert/branches/$BRANCH" --silent 2>/dev/null; then ref="$BRANCH"; else ref=codex/module-architecture; fi
           echo "DESERT branch: $ref"
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
-      # DESERT is private: a fine-grained read-only token for c0sm1cdus7/desert, stored as DESERT_READ_TOKEN.
+      # DESERT is public (Apache 2.0): the workflow's own token reads it; no extra secret.
       - uses: actions/checkout@v4
-        with: { repository: c0sm1cdus7/desert, ref: "${{ steps.desert.outputs.ref }}", path: desert, token: "${{ secrets.DESERT_READ_TOKEN }}", persist-credentials: false }
+        with: { repository: c0sm1cdus7/desert, ref: "${{ steps.desert.outputs.ref }}", path: desert, persist-credentials: false }
       - run: git -C desert rev-parse HEAD
       - uses: actions/setup-node@v4
         with: { node-version: 24.16.0 }
