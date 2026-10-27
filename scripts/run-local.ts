@@ -4,6 +4,7 @@ import { compile } from "desert-sdk/src/index.ts";
 import { serveIdentityHost } from "desert-sdk/src/local/identity-host.ts";
 import { assertProductSource } from "desert-sdk/src/authoring/index.ts";
 import { privateImages } from "./private-images.ts";
+import { VoidInstallation } from "../installation.ts";
 
 await assertProductSource(fileURLToPath(new URL("../src", import.meta.url)));
 const { VoidViewProgram, VoidProduct } = await import("../src/void.product.ts");
@@ -13,7 +14,7 @@ const { localMedia } = await import("./local-media.ts");
 
 const directory = process.argv[3] ? resolve(process.argv[3]) : fileURLToPath(new URL("../.local/void", import.meta.url));
 const server = await serveIdentityHost({
-  application: compile(VoidProduct), roles: [Dependencies.notes.id, Dependencies.tasks.id, Dependencies.media.id], surfaceId: VoidHumanExposure.id,
+  application: compile(VoidProduct), roles: [Dependencies.notes.id, Dependencies.tasks.id, Dependencies.media.id], installation: VoidInstallation, surfaceId: VoidHumanExposure.id,
   directory, privateImages: privateImages(directory),
   buildDirectory: process.argv[2] ? resolve(process.argv[2]) : fileURLToPath(new URL("../build/void-web", import.meta.url)),
   ...localMedia(VoidViewProgram),

@@ -15,6 +15,7 @@ import { CreateNote } from "../../src/modules/notes/journeys/createNote.journey.
 import { ReadNotes } from "../../src/modules/notes/journeys/readNotes.journey.ts";
 import { localMedia } from "../../scripts/local-media.ts";
 import { privateImages } from "../../scripts/private-images.ts";
+import { VoidInstallation } from "../../installation.ts";
 import { compileViewProgram } from "desert-sdk/src/views/program.ts";
 import { productViewProgram } from "desert-sdk/src/modules/compiled-product.ts";
 import { GuidedNote } from "../../src/modules/notes/journeys/guidedNote.journey.ts";
@@ -46,7 +47,7 @@ test("another tab's sign-in cannot inherit a prepared activity or publish a late
   try {
     host = await openControllerHost({ application,
       roles: [Dependencies.notes.id, Dependencies.tasks.id, Dependencies.media.id],
-      surfaceId: VoidHumanExposure.id, directory, privateImages: privateImages(directory) });
+      installation: VoidInstallation, surfaceId: VoidHumanExposure.id, directory, privateImages: privateImages(directory) });
     const administrator = await host.controller.access.initialize({ login: "identity-a", displayName: "Identity A", password });
     await host.controller.access.createIdentity(administrator.token, { login: "identity-b", displayName: "Identity B", password });
     const member = await host.controller.access.signIn({ login: "identity-b", password });
