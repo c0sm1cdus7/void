@@ -4,7 +4,9 @@ import { compile } from 'desert-sdk/src/index.ts';
 import { VoidProduct, VoidViewProgram } from '../src/void.product.ts';
 
 test('Notes and Tasks presentation refinements preserve the installed data contract',()=>{
-  assert.equal(compile(VoidProduct).digest,'07807ce6126189b23b686e4e614fb933785dc2418a5f24a1184dcb5c91b3c756',
+  // DESERT slice 7.4 repins the data contract once: the image fact became file({ accept, maxBytes }) and its column now
+  // references the SDK's asset object, so an installed a9/a11 store needs that storage migration before it serves.
+  assert.equal(compile(VoidProduct).digest,'5d99a4c7053d5ecba4023e6cc19e18c8082f6eef23d71d20c39ff5c54cbb4130',
     'The original a9 installation stays authoritative; this presentation slice cannot repin or migrate its store');
 });
 
