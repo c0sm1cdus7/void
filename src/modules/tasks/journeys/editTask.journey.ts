@@ -9,7 +9,7 @@ export const EditTask = mutationJourney("edit-task", EditTaskRecord, {
   controller: TasksController, dependencies: [],
 });
 
-export const EditTaskExperience = {
+export const EditTaskJourney = {
   id: EditTask.id, kind: "update", source: ReadTasks, view: TaskEditorView, preferredDock: "right",
   initialize: [
     initializeInput(EditTaskRecord, "title", factReference(Task, "title")),

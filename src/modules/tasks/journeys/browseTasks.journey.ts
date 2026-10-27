@@ -6,7 +6,7 @@ import { CreateProject } from "./createProject.journey.ts";
 import { ReadTasks } from "./readTasks.journey.ts";
 export { ReadTasks } from "./readTasks.journey.ts";
 
-export const ReadTasksExperience = {
+export const ReadTasksJourney = {
   id: ReadTasks.id, kind: "read", view: TasksView, detailView: TaskDetailView,
   referenceCreation: "separate",
   outputs: [

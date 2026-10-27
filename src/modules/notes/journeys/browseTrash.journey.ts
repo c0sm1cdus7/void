@@ -3,7 +3,7 @@ import { TrashView } from "../views/trash.view.ts";
 import { NoteDetailView } from "../views/noteDetail.view.ts";
 import { ReadTrash } from "./readTrash.journey.ts";
 
-export const ReadTrashExperience = {
+export const ReadTrashJourney = {
   id: ReadTrash.id, kind: "read", view: TrashView, detailView: NoteDetailView,
   outputs: [
     { ...viewOutput(TrashView, "notes"), action: { kind: "back" } },

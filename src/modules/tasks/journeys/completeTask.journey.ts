@@ -7,6 +7,6 @@ export const CompleteTask = mutationJourney("complete-task", CompleteTaskRecord,
   controller: TasksController, dependencies: [],
 });
 
-export const CompleteTaskExperience = {
+export const CompleteTaskJourney = {
   id: CompleteTask.id, kind: "action", source: ReadTasks, outputs: [],
 } satisfies ViewJourney;

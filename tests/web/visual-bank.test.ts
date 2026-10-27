@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { InteractionCatalog } from "desert-sdk/src/interaction/catalog.ts";
-import { sharedIndexOwners } from "desert-sdk/src/svelte/catalog/shared-purpose.ts";
+import { ResolvedNodes } from "desert-sdk/src/interaction/catalog.ts";
+import { sharedIndexOwners } from "desert-sdk/src/svelte/infra/shared-purpose.ts";
 import { browserFixture, settleMotion } from "./fixture.ts";
 
 test("built Visual bank publishes its index, real grouped facts and responsive state inspection without product mutations", async () => {
@@ -16,11 +16,11 @@ test("built Visual bank publishes its index, real grouped facts and responsive s
     const index = main.locator('[data-catalog-index]');
     await index.waitFor();
     assert.equal(await main.locator('[data-catalog-entry]:visible').count(),0);
-    for (const group of InteractionCatalog.groups) {
+    for (const group of ResolvedNodes.groups) {
       const stack=index.getByRole('group',{name:group.title,exact:true});
       assert.equal(await stack.locator('[data-grouped-panel]').count(),1);
       assert.equal(await stack.locator('[data-destination]').count(),
-        InteractionCatalog.entries.filter(entry=>entry.inspection.group===group.id).length+sharedIndexOwners(group.id).length);
+        ResolvedNodes.entries.filter(entry=>entry.inspection.group===group.id).length+sharedIndexOwners(group.id).length);
     }
     assert.equal(await main.getByRole('navigation',{name:'Catalog navigation'}).count(),0);
     assert.deepEqual((await index.locator('.place-stack > legend:visible').allTextContents()).map(text=>text.trim()),['Foundations','Compositions']);

@@ -4,6 +4,6 @@ import { MediaController } from "../media.dependencies.ts";
 import { ReadImageTrash } from "./readImageTrash.journey.ts";
 
 export const RestoreImage = mutationJourney("restore-image", RestoreImageRecord, { controller: MediaController, dependencies: [] });
-export const RestoreImageExperience = {
+export const RestoreImageJourney = {
   id: RestoreImage.id, kind: "action", source: ReadImageTrash, outputs: [],
 } satisfies ViewJourney;

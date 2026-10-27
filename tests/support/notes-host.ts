@@ -1,7 +1,8 @@
 import { Pool } from "pg";
 import { compile } from "desert-sdk/src/index.ts";
 import { openLocalController } from "desert-sdk/src/local.ts";
-import type { Receipt, StoredObject } from "desert-sdk/src/local/types.ts";
+import type { Receipt } from "desert-sdk/src/local/types.ts";
+import { storedObjects } from "desert-sdk/src/testing/stored-objects.ts";
 import { postgresCluster } from "desert-sdk/src/testing/postgres-cluster.ts";
 import { NotesController } from "../../src/modules/notes/notes.dependencies.ts";
 import { VOID, VoidProduct } from "../../src/void.product.ts";
@@ -35,11 +36,10 @@ export async function openNotesTestHost() {
       },
       async snapshot() {
         if (!observer) throw new Error("TEST_HOST_NOT_CONNECTED");
-        const objects = await observer.query<StoredObject>(
-          "SELECT id, object_type, version, facts FROM desert_objects ORDER BY id");
+        const objects = await storedObjects(observer, application);
         const receipts = await observer.query<{ result: Receipt }>(
           "SELECT result FROM desert_receipts ORDER BY intent_id");
-        return { objects: objects.rows, receipts: receipts.rows.map(row => row.result) };
+        return { objects, receipts: receipts.rows.map(row => row.result) };
       },
       async restart() {
         await disconnect();

@@ -8,7 +8,7 @@ export const CreateTask = mutationJourney("create-task", CreateTaskRecord, {
   controller: TasksController, dependencies: [],
 });
 
-export const CreateTaskExperience = {
+export const CreateTaskJourney = {
   id: CreateTask.id, kind: "create", source: ReadTasks, view: TaskEditorView, preferredDock: "right",
   outputs: [
     { ...viewOutput(TaskEditorView, "save"), action: { kind: "submit" } },

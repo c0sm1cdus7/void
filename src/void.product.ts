@@ -5,15 +5,16 @@ import { HomeView } from "./views/home.view.ts";
 import { WorkspaceView } from "./views/workspace.view.ts";
 import { NavigationView } from "./views/navigation.view.ts";
 import { HomeDestination, VoidNavigation } from "./navigation.ts";
-import { VoidAgentSurface, VoidHumanSurface } from "./surfaces.ts";
+import { VoidAgentExposure, VoidHumanExposure } from "./exposures.ts";
+import { Messages, m } from "./messages/keys.ts";
 
 /** The only authored root. DESERT derives execution, views and the storyboard. */
 export const VoidProduct = composeProduct({
-  id: "void", label: "VOID",
+  id: "void", label: m.void.label, messages: Messages,
   modules: Modules,
   views: [HomeView, WorkspaceView, NavigationView], workspace: WorkspaceView,
   journeys: [{ presentation: HomeJourney }],
-  destinations: [HomeDestination], surfaces: [VoidHumanSurface, VoidAgentSurface],
+  destinations: [HomeDestination], exposures: [VoidHumanExposure, VoidAgentExposure],
   entry: HomeDestination, navigation: VoidNavigation,
 });
 

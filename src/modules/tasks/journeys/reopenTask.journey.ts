@@ -7,6 +7,6 @@ export const ReopenTask = mutationJourney("reopen-task", ReopenTaskRecord, {
   controller: TasksController, dependencies: [],
 });
 
-export const ReopenTaskExperience = {
+export const ReopenTaskJourney = {
   id: ReopenTask.id, kind: "action", source: ReadTasks, outputs: [],
 } satisfies ViewJourney;

@@ -11,6 +11,8 @@
   "scripts": {
     "web:build": "node scripts/build-web.ts",
     "dev": "node scripts/run-local.ts",
+    "messages:write": "node node_modules/desert-sdk/scripts/messages.ts --write src",
+    "messages:check": "node node_modules/desert-sdk/scripts/messages.ts --check src",
     "source:check": "node scripts/check-source.ts",
     "inspect": "node scripts/inspect.ts",
     "typecheck": "tsc --noEmit",

@@ -9,7 +9,7 @@ export const CreateNote = mutationJourney("create-note", CreateNoteRecord, {
   dependencies: [],
 });
 
-export const CreateNoteExperience = {
+export const CreateNoteJourney = {
   id: CreateNote.id, kind: "create", source: ReadNotes, view: NoteEditorView, preferredDock: "right",
   outputs: [
     { ...viewOutput(NoteEditorView, "save"), action: { kind: "submit" } },

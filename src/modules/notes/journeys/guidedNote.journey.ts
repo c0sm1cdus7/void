@@ -11,7 +11,7 @@ export const GuidedNote = mutationJourney("guided-note", CreateNoteRecord, {
 });
 const Inputs = activityInputs(GuidedNote);
 
-export const GuidedNoteExperience = activityExperience({
+export const GuidedNoteJourney = activityExperience({
   journey: GuidedNote,
   steps: [
     { view: NoteTitleView, inputs: [Inputs.title] },

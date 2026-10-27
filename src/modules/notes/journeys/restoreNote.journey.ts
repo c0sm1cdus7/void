@@ -7,6 +7,6 @@ export const RestoreNote = mutationJourney("restore-note", RestoreNoteRecord, {
   controller: NotesController, dependencies: [],
 });
 
-export const RestoreNoteExperience = {
+export const RestoreNoteJourney = {
   id: RestoreNote.id, kind: "action", source: ReadTrash, outputs: [],
 } satisfies ViewJourney;

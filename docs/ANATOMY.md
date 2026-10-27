@@ -4,8 +4,8 @@ VOID declares a product; DESERT validates, executes and renders it. Views are
 typed data, not UI components. The capability migration is installed under
 `src/`; this document maps actual files rather than a proposed tree.
 
-`VoidHumanSurface` and `VoidAgentSurface` name interaction exposure, not separate
-Notes applications. `surfaces.ts` no longer declares an initial read, primary
+`VoidHumanExposure` and `VoidAgentExposure` name interaction exposure, not separate
+Notes applications. `exposures.ts` no longer declares an initial read, primary
 action, subject-action list, field/label maps or submission/review maps. Composed
 human exposure accepts only `id`, execution journey objects and `locale`.
 The Product's Home entry and journey bindings are the only navigation owner.
@@ -24,7 +24,7 @@ owners. Public catalogs contain SDK-issued object references. Consumers use
 src/
 ├── void.product.ts                  One root: mounted modules + Workspace + Home
 ├── navigation.ts                    Destination references, groups, purpose and order
-├── surfaces.ts                      Human and agent journey exposure
+├── exposures.ts                      Human and agent journey exposure
 ├── modules.ts                       Derived public references from mounted manifests
 ├── views/workspace.view.ts          Root: Navigation View in leftDock + active destination
 ├── views/navigation.view.ts         Product identity + the declared destination list
@@ -123,7 +123,7 @@ contract digest. It does not read notes or execute commands.
 
 ## Human semantics, declared with their owners
 
-In [`surfaces.ts`](../src/surfaces.ts), `ExposedJourneys` selects the public
+In [`exposures.ts`](../src/exposures.ts), `ExposedJourneys` selects the public
 execution references from [`modules.ts`](../src/modules.ts). This excerpt shows
 the Notes create/read/edit subset; the actual exposures also include Trash/Restore,
 Tasks and private image reads. Import image is human-only until an actual binary
@@ -132,14 +132,14 @@ agent acquisition mechanism exists:
 ```ts
 const ExposedJourneys = [Journeys.createNote, Journeys.readNotes, Journeys.editNote];
 
-export const VoidHumanSurface = humanSurface({
+export const VoidHumanExposure = humanExposure({
   id: "human",
   journeys: ExposedJourneys,
   locale: "en",
 });
 ```
 
-`moduleCatalog([...mountedManifests])` derives `Journeys`, `Views`, `Commands`,
+`moduleIndex([...mountedManifests])` derives `Journeys`, `Views`, `Commands`,
 `Destinations` and `Dependencies` from
 the manifests' public exports. These are projections of one catalog, not manually
 maintained registries. Commands derive from exported mutation journeys; a command
@@ -172,13 +172,13 @@ registers these execution/presentation pairs once:
 
 ```ts
 [
-  { execution: CreateNote, presentation: CreateNoteExperience, label: "Create note", humanReview: "not-required" },
-  { execution: ReadNotes, presentation: ReadNotesExperience, label: "Notes" },
-  { execution: EditNote, presentation: EditNoteExperience, label: "Edit note", humanReview: "not-required" },
+  { execution: CreateNote, presentation: CreateNoteJourney, label: "Create note", humanReview: "not-required" },
+  { execution: ReadNotes, presentation: ReadNotesJourney, label: "Notes" },
+  { execution: EditNote, presentation: EditNoteJourney, label: "Edit note", humanReview: "not-required" },
 ]
 ```
 
-[`compileSurfaceExposures`](../../desert/src/modules/compile-surfaces.ts) derives
+[`compileExposures`](../../desert/src/modules/compile-exposures.ts) derives
 canonical `language`, `fieldRepresentations` and `commit` maps from these owners before
 the SDK's internal wire compilation. Public hosts/builds call `compile(VoidProduct)`,
 not `compile(VOID)`. `paragraphs` maps to the existing multiline reading presentation;
@@ -308,20 +308,20 @@ host. The same approved primitive owners, geometry, toolbar, search and motion
 remain in DESERT. No visual implementation moved into VOID.
 
 The actual rendering route starts at SDK
-[ViewProduct](../../desert/src/svelte/views/ViewProduct.svelte), not a VOID page
+[ViewProduct](../../desert/src/svelte/catalog/renderer/view-product/ViewProduct.svelte), not a VOID page
 component. It passes the model snapshot through the
-[bounded gateway](../../desert/src/svelte/adapter-catalog.ts) to
-[ViewWorkspace](../../desert/src/svelte/pieces/ViewWorkspace.svelte), which
+[generated catalog index](../../desert/src/svelte/catalog/index.ts) to
+[ViewWorkspace](../../desert/src/svelte/catalog/compositions/view-workspace/ViewWorkspace.svelte), which
 resolves the declared root through the SDK's
 [workspace resolver](../../desert/src/views/program-workspace.ts), then composes
 the existing shell, declared navigation, search overlay and retained content.
 
 | VOID declaration | Shared catalog composition |
 | --- | --- |
-| [Notes home](../src/modules/notes/views/notesHome.view.ts) | Ordered [ContentFlow](../../desert/src/svelte/pieces/ContentFlow.svelte): standalone Header, titled Stack and bound collection. |
+| [Notes home](../src/modules/notes/views/notesHome.view.ts) | Ordered [ContentFlow](../../desert/src/svelte/catalog/compositions/content-flow/ContentFlow.svelte): standalone Header, titled Stack and bound collection. |
 | [Note detail](../src/modules/notes/views/noteDetail.view.ts) and [editor](../src/modules/notes/views/noteEditor.view.ts) | Resolved Panel → existing Drawer → SurfaceFrame. Titles and available actions are resolved before rendering. |
-| [Visual catalog](../src/modules/visualCatalog/views/visualCatalog.view.ts) | Inspection adapter → [Inspection](../../desert/src/svelte/pieces/Inspection.svelte) → [InspectionCatalog](../../desert/src/svelte/catalog/InspectionCatalog.svelte), using the actual web bank and local specimens. |
-| [Media](../src/modules/media/views/media.view.ts) | Media adapter → [MediaLibrary](../../desert/src/svelte/pieces/media/Library.svelte) → existing catalog hero/cards and shared Viewer. |
+| [Visual catalog](../src/modules/visualCatalog/views/visualCatalog.view.ts) | Inspection adapter → [Inspection](../../desert/src/svelte/catalog/compositions/inspection/Inspection.svelte) → [InspectionCatalog](../../desert/src/svelte/catalog/compositions/inspection-catalog/InspectionCatalog.svelte), using the actual web bank and local specimens. |
+| [Media](../src/modules/media/views/media.view.ts) | Media adapter → [MediaLibrary](../../desert/src/svelte/catalog/compositions/library/Library.svelte) → existing catalog hero/cards and shared Viewer. |
 
 These are bounded SDK owners, not product overrides or replacement screens.
 Render adapters select them using typed props; owners implement the DOM,

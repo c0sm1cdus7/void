@@ -1,0 +1,238 @@
+{
+  "home": {
+    "open": "Open",
+    "completed": "Completed",
+    "destination": "Home",
+    "createNote": "Create note",
+    "widgets": "Widgets",
+    "tasks": {
+      "title": "Tasks",
+      "description": "Your work at a glance.",
+      "total": "Tasks"
+    }
+  },
+  "appearance": {
+    "destination": "Appearance",
+    "title": "Appearance",
+    "subtitle": "Make VOID comfortable on this device."
+  },
+  "identity": {
+    "destination": "Identity",
+    "lock": "Lock VOID",
+    "title": "Identity",
+    "subtitle": "Your access to this VOID instance."
+  },
+  "media": {
+    "collection": {
+      "nameField": "Collection name",
+      "presentationField": "Presentation",
+      "coverField": "Cover",
+      "createSubtitle": "Gather related media in a named collection.",
+      "detailSubtitle": "Media gathered in this collection.",
+      "content": "Content",
+      "editorSubtitle": "Edit the name, cover and presentation of this collection."
+    },
+    "titleField": "Title",
+    "fileField": "Media file",
+    "fitField": "Thumbnail fit",
+    "descriptionField": "Description",
+    "collectionsField": "Collections",
+    "statusField": "Status",
+    "places": {
+      "sahara": "Sahara Desert",
+      "serengeti": "Serengeti",
+      "deadvlei": "Deadvlei",
+      "grandCanyon": "Grand Canyon",
+      "niagara": "Niagara Falls",
+      "joshuaTree": "Joshua Tree",
+      "rockyMountains": "Rocky Mountains",
+      "monumentValley": "Monument Valley",
+      "muirWoods": "Muir Woods",
+      "amazon": "Amazon Rainforest",
+      "lencois": "Lençóis Maranhenses",
+      "uyuni": "Uyuni Salt Flat",
+      "dover": "White Cliffs of Dover",
+      "alps": "Alps",
+      "fuji": "Mount Fuji",
+      "wulingyuan": "Wulingyuan",
+      "everest": "Mount Everest",
+      "reef": "Great Barrier Reef",
+      "yellowstone": "Yellowstone National Park",
+      "shetland": "South Shetland Islands",
+      "kirkjufell": "Kirkjufell Mountain",
+      "motionStudy": "Motion study",
+      "motionStudyArtwork": "A light circle on a blue and sand gradient",
+      "quietTones": "Quiet tones"
+    },
+    "captions": {
+      "english": "English"
+    },
+    "albums": {
+      "asia": "Asia",
+      "africa": "Africa",
+      "antarctica": "Antarctica",
+      "australiaOceania": "Australia/Oceania",
+      "europe": "Europe",
+      "northAmerica": "North America",
+      "southAmerica": "South America",
+      "studio": "Studio"
+    },
+    "destination": "Media",
+    "trashDestination": "Media Trash",
+    "collectionDestination": "Collection",
+    "readCollections": "Collections",
+    "createCollection": "Create collection",
+    "editCollection": "Edit collection",
+    "setCollections": "Update collection membership",
+    "readMedia": "Media",
+    "addMedia": "Add media",
+    "editMedia": "Edit media",
+    "trashMedia": "Move to Trash",
+    "restoreMedia": "Restore media",
+    "readTrash": "Media Trash",
+    "close": "Close",
+    "back": "Back",
+    "saveCollection": "Save collection",
+    "collections": {
+      "title": "Collections",
+      "subtitle": "Named groups for your images, video and audio.",
+      "all": "Collections"
+    },
+    "edit": {
+      "title": "Edit media",
+      "subtitle": "Change its presentation and collections. The original is preserved."
+    },
+    "saveChanges": "Save changes",
+    "detail": {
+      "title": "Media",
+      "subtitle": "View this item and edit its presentation."
+    },
+    "backToMedia": "Back to Media",
+    "trash": {
+      "title": "Media Trash",
+      "subtitle": "Originals stay private and can be restored.",
+      "deleted": "Deleted media"
+    },
+    "images": {
+      "title": "Media",
+      "subtitle": "Private to your identity. Originals are preserved.",
+      "all": "Media"
+    },
+    "manage": "Manage media",
+    "trashLink": "Trash",
+    "import": {
+      "subtitle": "Choose the presentation and optional collections. Originals are preserved."
+    },
+    "myImages": "My images",
+    "importImage": "Import image",
+    "library": {
+      "title": "Media",
+      "subtitle": "Explore your albums, images, videos and music."
+    },
+    "overview": {
+      "title": "Media",
+      "subtitle": "Your private media and collections. Originals are preserved.",
+      "collections": "Collections",
+      "media": "Media"
+    },
+    "rename": {
+      "title": "Rename image"
+    },
+    "saveTitle": "Save title"
+  },
+  "notes": {
+    "titleField": "Title",
+    "contentField": "Content",
+    "statusField": "Status",
+    "destination": "Notes",
+    "trashDestination": "Trash",
+    "createNote": "Create note",
+    "readNotes": "Notes",
+    "editNote": "Edit note",
+    "readTrash": "Trash",
+    "trashNote": "Move to Trash",
+    "restoreNote": "Restore note",
+    "guidedNote": "Guided note",
+    "body": {
+      "title": "Write your note",
+      "subtitle": "Review the note before saving it."
+    },
+    "close": "Close",
+    "detail": {
+      "subtitle": "Read and edit your note."
+    },
+    "saveNote": "Save note",
+    "editor": {
+      "subtitle": "Capture something worth keeping."
+    },
+    "titleStep": {
+      "title": "Name your note",
+      "subtitle": "You can leave the title empty."
+    },
+    "title": "Notes",
+    "subtitle": "Your private notes.",
+    "all": "All notes",
+    "manage": "Manage notes",
+    "trashLink": "Trash",
+    "back": "Back",
+    "trash": {
+      "title": "Trash",
+      "subtitle": "Your notes stay here until you restore them.",
+      "deleted": "Deleted notes"
+    }
+  },
+  "system": {
+    "destination": "System",
+    "title": "System",
+    "subtitle": "Current controller availability and installed contracts."
+  },
+  "tasks": {
+    "project": {
+      "nameField": "Name",
+      "colorField": "Color",
+      "detailSubtitle": "Use this project to group your personal tasks.",
+      "editorSubtitle": "Name the project and choose its color."
+    },
+    "titleField": "Title",
+    "detailsField": "Details",
+    "projectsField": "Projects",
+    "statusField": "Status",
+    "open": "Open",
+    "completed": "Completed",
+    "destination": "Tasks",
+    "readProjects": "Projects",
+    "createProject": "Create project",
+    "createTask": "Create task",
+    "readTasks": "Tasks",
+    "editTask": "Edit task",
+    "completeTask": "Complete task",
+    "reopenTask": "Reopen task",
+    "close": "Close",
+    "saveProject": "Save project",
+    "projects": {
+      "title": "Projects",
+      "subtitle": "Organize your tasks with named, colored projects."
+    },
+    "detail": {
+      "subtitle": "Review details, projects and progress."
+    },
+    "saveTask": "Save task",
+    "editor": {
+      "subtitle": "Describe the work and choose its projects."
+    },
+    "title": "Tasks",
+    "subtitle": "Your work, one task at a time.",
+    "all": "All tasks"
+  },
+  "visualCatalog": {
+    "title": "Visual catalog",
+    "subtitle": "Foundations and compositions used throughout VOID. Examples never change your content.",
+    "destination": "Visual catalog"
+  },
+  "void": {
+    "explore": "Explore",
+    "settings": "Settings",
+    "developer": "Developer",
+    "label": "VOID"
+  }
+}

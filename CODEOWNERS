@@ -1,0 +1,6 @@
+# Owner review of how VOID is built against DESERT, its dependencies and CI (plan 3.7).
+scripts/build-web.ts @c0sm1cdus7
+package.json @c0sm1cdus7
+package-lock.json @c0sm1cdus7
+.github/** @c0sm1cdus7
+CODEOWNERS @c0sm1cdus7

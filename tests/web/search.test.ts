@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { Page } from "playwright";
-import { InteractionCatalog } from "desert-sdk/src/interaction/catalog.ts";
-import { WebCatalogManifest } from "desert-sdk/src/svelte/catalog-manifest.ts";
+import { ResolvedNodes } from "desert-sdk/src/interaction/catalog.ts";
+import { sharedCatalogOwners } from "desert-sdk/src/svelte/infra/shared-owners.ts";
 import { CreateNote } from "../../src/modules/notes/journeys/createNote.journey.ts";
 import { browserFixture, settleMotion } from "./fixture.ts";
 
@@ -119,13 +119,14 @@ for (const width of [390, 1600]) {
       await settleMotion(f.page);
       await expectSearchClosed(f.page);
       const unchanged = await catalogContents(f.page);
-      const semanticIds = new Set<string>(InteractionCatalog.entries.map(entry => entry.id));
+      const semanticIds = new Set<string>(ResolvedNodes.entries.map(entry => entry.id));
       assert.deepEqual(unchanged.map(entry => entry.id).filter(id => semanticIds.has(id!)).sort(),
-        InteractionCatalog.entries.map(entry => entry.id).sort(), "all registered catalog entries are present before search");
+        ResolvedNodes.entries.map(entry => entry.id).sort(), "all registered catalog entries are present before search");
       assert.equal(new Set(unchanged.map(entry => entry.id)).size, unchanged.length,
         "semantic entries and shared owners each have one index destination");
+      const sharedOwners = new Set<string>(sharedCatalogOwners);
       for (const entry of unchanged.filter(entry => !semanticIds.has(entry.id!))) {
-        assert.ok(Object.hasOwn(WebCatalogManifest.owners, entry.id!), "every additional composition has a registered owner");
+        assert.ok(sharedOwners.has(entry.id!), "every additional composition is a registered shared owner");
       }
       await openSearch(f.page);
       await search(f.page).fill("date");

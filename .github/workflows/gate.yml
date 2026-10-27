@@ -1,0 +1,49 @@
+# VOID is built with DESERT: CI pairs the two repos by branch name (plan 3.7). Under the strict build (Q1) the web build
+# is red until DESERT's slice 6 closes the Visual Catalog violation list; that is expected and reported.
+name: gate
+on:
+  pull_request:
+  push:
+    branches: [codex/module-architecture, main]
+permissions:
+  contents: read
+jobs:
+  gate:
+    runs-on: ubuntu-24.04
+    env:
+      DESERT_PG_BIN: /usr/lib/postgresql/18/bin
+      LANG: C.UTF-8
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: void, fetch-depth: 0 }
+      - name: DESERT branch (same name, else codex/module-architecture)
+        id: desert
+        env: { BRANCH: "${{ github.head_ref || github.ref_name }}", GH_TOKEN: "${{ github.token }}" }
+        run: |
+          if gh api "repos/c0sm1cdus7/desert/branches/$BRANCH" --silent 2>/dev/null; then ref="$BRANCH"; else ref=codex/module-architecture; fi
+          echo "DESERT branch: $ref"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      # DESERT is public (Apache 2.0): the workflow's own token reads it; no extra secret.
+      - uses: actions/checkout@v4
+        with: { repository: c0sm1cdus7/desert, ref: "${{ steps.desert.outputs.ref }}", path: desert, persist-credentials: false }
+      - run: git -C desert rev-parse HEAD
+      - uses: actions/setup-node@v4
+        with: { node-version: 24.16.0 }
+      - name: PostgreSQL 18
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update
+          sudo apt-get install -y postgresql-18
+      - run: npm ci --ignore-scripts
+        working-directory: desert
+      - run: npx playwright install --with-deps chromium
+        working-directory: desert
+      - run: npm ci --ignore-scripts
+        working-directory: void
+      - run: npm run check
+        working-directory: void
+      - name: Web build (strict gate)
+        run: npm run web:build -- build/ci
+        working-directory: void
